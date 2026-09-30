@@ -1,0 +1,63 @@
+
+{% extends "base.html" %}
+
+{% block title %}Edit Subject{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+
+            <div class="card shadow border-0 rounded-4">
+                <div class="card-header text-white p-3"
+                     style="background: #4c1d95;">
+                    <h4 class="mb-0">Edit Subject</h4>
+                </div>
+
+                <div class="card-body p-4">
+
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            {{ error }}
+                        </div>
+                    {% endif %}
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                Subject Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="subject_name"
+                                name="subject_name"
+                                class="form-control"
+                                value="{{ subject.name|default:'' }}"
+                                maxlength="30"
+                                placeholder="Enter subject name"
+                                required
+                            >
+                        </div>
+
+                        <button type="submit"
+                                class="btn text-white"
+                                style="background: #4c1d95;">
+                            Update Subject
+                        </button>
+
+                        <a href="{% url 'subject_list' %}"
+                           class="btn btn-secondary">
+                            Cancel
+                        </a>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

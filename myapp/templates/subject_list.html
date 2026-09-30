@@ -1,0 +1,265 @@
+
+{% extends "base.html" %}
+
+{% block title %}Subjects - Smart Assignment Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+    .subject-page {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #1e1b4b, #312e81, #4c1d95);
+        color: white;
+        padding: 28px 30px;
+        border-radius: 18px;
+        margin-bottom: 28px;
+        box-shadow: 0 10px 30px rgba(30, 27, 75, 0.16);
+    }
+
+    .page-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .page-header p {
+        color: #ddd6fe;
+        margin-bottom: 0;
+        font-size: 14px;
+    }
+
+    .add-btn {
+        background: white;
+        color: #5b21b6;
+        border: none;
+        border-radius: 9px;
+        padding: 11px 18px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        transition: 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .add-btn:hover {
+        background: #ede9fe;
+        color: #4c1d95;
+        transform: translateY(-2px);
+    }
+
+    .subject-card {
+        height: 100%;
+        background: white;
+        border: 1px solid #ebe8f5;
+        border-top: 4px solid #7c3aed;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 7px 24px rgba(49, 46, 129, 0.07);
+        transition: 0.3s ease;
+    }
+
+    .subject-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 13px 30px rgba(49, 46, 129, 0.13);
+        border-color: #ddd6fe;
+    }
+
+    .subject-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f3ff;
+        border-radius: 12px;
+        font-size: 24px;
+        margin-bottom: 18px;
+    }
+
+    .subject-name {
+        color: #302c49;
+        font-size: 21px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+        margin-bottom: 22px;
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 10px;
+        border-top: 1px solid #eeeaf6;
+        padding-top: 16px;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        flex: 1;
+        text-align: center;
+        text-decoration: none;
+        padding: 9px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        transition: 0.25s ease;
+    }
+
+    .edit-btn {
+        color: #6d28d9;
+        background: #f5f3ff;
+        border: 1px solid #ddd6fe;
+    }
+
+    .edit-btn:hover {
+        background: #ede9fe;
+        color: #5b21b6;
+    }
+
+    .delete-btn {
+        color: #dc2626;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+    }
+
+    .delete-btn:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .empty-message {
+        background: white;
+        padding: 50px 25px;
+        text-align: center;
+        border: 1px solid #ebe8f5;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(49, 46, 129, 0.06);
+    }
+
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    .empty-message h3 {
+        color: #302c49;
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .empty-message p {
+        color: #817d91;
+        font-size: 14px;
+        margin-bottom: 22px;
+    }
+
+    .empty-add-btn {
+        background: #6d28d9;
+        color: white;
+        padding: 11px 20px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-weight: 700;
+        display: inline-block;
+    }
+
+    .empty-add-btn:hover {
+        background: #5b21b6;
+        color: white;
+    }
+
+    @media (max-width: 576px) {
+        .page-header {
+            padding: 22px;
+        }
+
+        .page-header h1 {
+            font-size: 23px;
+        }
+
+        .header-actions,
+        .header-actions .add-btn {
+            width: 100%;
+        }
+
+        .card-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="subject-page">
+
+    <div class="page-header">
+        <div class="row align-items-center g-3">
+            <div class="col-12 col-md">
+                <h1> Subject Management</h1>
+                <p>Manage and organize your academic subjects.</p>
+            </div>
+
+            <div class="col-12 col-md-auto header-actions">
+                <a href="{% url 'add_subject' %}" class="add-btn">
+                   ＋ Add Subject
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row g-4">
+
+        {% for subject in subjects %}
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="subject-card">
+
+                
+
+                <h2 class="subject-name">
+                    {{ subject.name|default:subject.subject_name }}
+                </h2>
+
+                <div class="card-actions">
+                    <a href="{% url 'edit_subject' subject.id %}"
+                       class="edit-btn">
+                         Edit
+                    </a>
+
+                    <a href="{% url 'delete_subject' subject.id %}"
+                       class="delete-btn">
+                         Delete
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        {% empty %}
+
+        <div class="col-12">
+            <div class="empty-message">
+                
+
+                <h3>No Subjects Found</h3>
+
+                <p>
+                    You haven't added any subjects yet.
+                    Start by creating your first subject.
+                </p>
+
+                <a href="{% url 'add_subject' %}"
+                   class="empty-add-btn">
+                    ＋ Add Your First Subject
+                </a>
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

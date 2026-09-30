@@ -1,0 +1,395 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Add Assignment - Smart Assignment Tracker
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .assignment-form-page {
+        max-width: 950px;
+        margin: 0 auto;
+        padding: 20px 12px;
+    }
+
+    .form-header {
+        position: relative;
+        overflow: hidden;
+        padding: 30px;
+        margin-bottom: 25px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #1e1b4b, #4c1d95);
+        box-shadow: 0 10px 30px rgba(30, 27, 75, 0.15);
+    }
+
+    .form-header::after {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        right: -60px;
+        top: -80px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-header h1 {
+        position: relative;
+        z-index: 1;
+        color: #ffffff;
+        font-size: 29px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .form-header p {
+        position: relative;
+        z-index: 1;
+        color: #ddd6fe;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 0;
+    }
+
+    .form-card {
+        padding: 32px;
+        background: #ffffff;
+        border: 1px solid #ebe8f5;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(49, 46, 129, 0.07);
+    }
+
+    .form-section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 5px 0 22px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #eeeaf6;
+        color: #312e81;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .form-label {
+        color: #403b59;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        padding: 12px 13px;
+        border: 1px solid #ddd9ed;
+        border-radius: 9px;
+        background-color: #fafaff;
+        color: #302c49;
+        font-size: 14px;
+    }
+
+    .form-control::placeholder {
+        color: #aaa6b8;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #7c3aed;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10);
+    }
+
+    textarea.form-control {
+        min-height: 125px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    input[type="file"].form-control {
+        padding: 9px;
+    }
+
+    .error-message {
+        margin-bottom: 24px;
+        padding: 13px 16px;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        background: #fef2f2;
+        color: #dc2626;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 10px;
+        padding-top: 22px;
+        border-top: 1px solid #eeeaf6;
+    }
+
+    .btn-save {
+        padding: 12px 22px;
+        border: none;
+        border-radius: 9px;
+        background: #6d28d9;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .btn-save:hover {
+        background: #5b21b6;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(109, 40, 217, 0.20);
+    }
+
+    .btn-cancel {
+        padding: 12px 22px;
+        border: 1px solid #e5e1ef;
+        border-radius: 9px;
+        background: #f3f0fa;
+        color: #514d68;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        text-align: center;
+        transition: 0.2s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #e9e5f2;
+        color: #312e81;
+    }
+
+    @media (max-width: 576px) {
+        .assignment-form-page {
+            padding: 12px 4px;
+        }
+
+        .form-header {
+            padding: 23px 20px;
+        }
+
+        .form-header h1 {
+            font-size: 24px;
+        }
+
+        .form-card {
+            padding: 22px 17px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-save,
+        .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="assignment-form-page">
+
+    <!-- Page Header -->
+    <div class="form-header">
+        <h1> Add Assignment</h1>
+        <p>
+            Create a new assignment and keep track of your deadline,
+            priority and progress.
+        </p>
+    </div>
+
+    <!-- Assignment Form Card -->
+    <div class="form-card">
+
+        {% if error %}
+            <div class="error-message" role="alert">
+                ⚠️ {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Assignment Information -->
+            <div class="form-section-title">
+                 Assignment Information
+            </div>
+
+            <div class="mb-4">
+                <label for="title" class="form-label">
+                    Assignment Title
+                </label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="title"
+                    name="title"
+                    placeholder="Enter assignment title"
+                    required
+                >
+            </div>
+
+            <div class="row g-3 mb-3">
+
+                <div class="col-md-6">
+                    <label for="subject" class="form-label">
+                        Subject
+                    </label>
+
+                    <select
+                        class="form-select"
+                        id="subject"
+                        name="subject"
+                        required
+                    >
+                        <option value="">Select Subject</option>
+
+                        {% for subject in subjects %}
+                            <option value="{{ subject.id }}">
+                                {{ subject.name|default:subject.subject_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="name" class="form-label">
+                        Student Name
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        name="name"
+                        placeholder="Enter student name"
+                        required
+                    >
+                </div>
+
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="form-label">
+                    Description
+                </label>
+
+                <textarea
+                    class="form-control"
+                    id="description"
+                    name="description"
+                    placeholder="Enter assignment description"
+                    required
+                ></textarea>
+            </div>
+
+            <!-- Assignment Details -->
+            <div class="form-section-title">
+                 Assignment Details
+            </div>
+
+            <div class="row g-3 mb-3">
+
+                <div class="col-md-6">
+                    <label for="due_date" class="form-label">
+                        Due Date
+                    </label>
+
+                    <input
+                        type="date"
+                        class="form-control"
+                        id="due_date"
+                        name="due_date"
+                        required
+                    >
+                </div>
+
+                <div class="col-md-6">
+                    <label for="priority" class="form-label">
+                        Priority
+                    </label>
+
+                    <select
+                        class="form-select"
+                        id="priority"
+                        name="priority"
+                        required
+                    >
+                        <option value="">Select Priority</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+                    <label for="status" class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        class="form-select"
+                        id="status"
+                        name="status"
+                        required
+                    >
+                        <option value="">Select Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="attachment" class="form-label">
+                        Attachment
+                    </label>
+
+                    <input
+                        type="file"
+                        class="form-control"
+                        id="attachment"
+                        name="attachment"
+                    >
+                    <small class="text-secondary d-block mt-2">
+                        Attach a file if required.
+                    </small>
+                </div>
+
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+
+                <button type="submit" class="btn btn-save">
+                    Save Assignment
+                </button>
+
+                <a
+                    href="{% url 'assignment_list' %}"
+                    class="btn-cancel"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}
+

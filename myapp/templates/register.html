@@ -1,0 +1,412 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register - Smart Student Academic & Aptitude Tracker</title>
+
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --primary-dark: #1e1b4b;
+            --primary: #312e81;
+            --primary-light: #4c1d95;
+            --purple: #6d28d9;
+            --page-bg: #f7f5fc;
+            --text-color: #211d38;
+            --accent: #ddd6fe;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: var(--text-color);
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(124, 58, 237, 0.10),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at bottom right,
+                    rgba(49, 46, 129, 0.10),
+                    transparent 35%
+                ),
+                var(--page-bg);
+        }
+
+
+        .custom-navbar {
+            padding: 17px 7%;
+            background: linear-gradient(
+                135deg,
+                var(--primary-dark),
+                var(--primary),
+                var(--primary-light)
+            );
+            box-shadow: 0 5px 20px rgba(30, 27, 75, 0.18);
+        }
+
+        .brand-name {
+            color: white;
+            font-size: 19px;
+            font-weight: 700;
+            text-decoration: none;
+            line-height: 1.5;
+        }
+
+        .brand-name:hover {
+            color: var(--accent);
+        }
+
+        .home-btn {
+            display: inline-block;
+            padding: 9px 17px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 9px;
+            transition: 0.3s;
+        }
+
+        .home-btn:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+
+        .register-section {
+            padding: 45px 12px 30px;
+        }
+
+        .register-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ebe8f5;
+            border-radius: 18px;
+            background: white;
+            box-shadow: 0 12px 35px rgba(49, 46, 129, 0.10);
+        }
+
+        .card-top-line {
+            height: 5px;
+            background: linear-gradient(
+                90deg,
+                #6d28d9,
+                #8b5cf6,
+                #c084fc
+            );
+        }
+
+        .register-card-body {
+            padding: 35px;
+        }
+
+        .register-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ede9fe;
+            border: 1px solid var(--accent);
+            border-radius: 18px;
+            font-size: 29px;
+        }
+
+        .page-heading {
+            color: #332e4d;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #77738a;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .form-label {
+            color: #514d68;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .form-control {
+            min-height: 46px;
+            padding: 12px 14px;
+            color: #302c49;
+            background: #fafaff;
+            border: 1px solid #ddd9ed;
+            border-radius: 9px;
+            font-size: 14px;
+        }
+
+        .form-control::placeholder {
+            color: #aaa6b8;
+        }
+
+        .form-control:focus {
+            background: white;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10);
+        }
+
+
+        .error-box {
+            padding: 12px 14px;
+            margin-bottom: 20px;
+            color: #dc2626;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 9px;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+     
+        .signup-btn {
+            width: 100%;
+            padding: 13px;
+            color: white;
+            background: linear-gradient(
+                135deg,
+                var(--purple),
+                var(--primary-light)
+            );
+            border: none;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: 700;
+            transition: 0.3s;
+            box-shadow: 0 7px 18px rgba(109, 40, 217, 0.18);
+        }
+
+        .signup-btn:hover {
+            color: white;
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(109, 40, 217, 0.24);
+        }
+
+        .signup-btn:focus-visible,
+        .home-btn:focus-visible,
+        .brand-name:focus-visible,
+        .bottom-link a:focus-visible {
+            outline: 3px solid #a78bfa;
+            outline-offset: 3px;
+        }
+
+        /* LOGIN LINK */
+        .bottom-link {
+            padding-top: 20px;
+            margin-top: 24px;
+            border-top: 1px solid #eeeaf6;
+            color: #77738a;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .bottom-link a {
+            color: var(--purple);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .bottom-link a:hover {
+            color: var(--primary-light);
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            color: #8b879b;
+            font-size: 12px;
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 600px) {
+            .custom-navbar {
+                padding: 17px 16px;
+            }
+
+            .brand-name {
+                font-size: 16px;
+            }
+
+            .register-section {
+                padding-top: 30px;
+            }
+
+            .register-card-body {
+                padding: 28px 22px;
+            }
+
+            .page-heading {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="custom-navbar">
+        <div class="container-fluid d-flex flex-column flex-sm-row
+                    justify-content-between align-items-center gap-3">
+
+            <a href="{% url 'home' %}" class="brand-name text-center text-sm-start">
+                🎓 Smart Student Academic & Aptitude Tracker
+            </a>
+
+            <a href="{% url 'home' %}" class="home-btn">
+                🏠 Home
+            </a>
+
+        </div>
+    </nav>
+
+    <!-- REGISTER SECTION -->
+    <main class="container register-section">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+
+                <div class="register-card">
+
+                    <div class="card-top-line"></div>
+
+                    <div class="register-card-body">
+
+                        <div class="register-icon">
+                            ✨
+                        </div>
+
+                        <h1 class="page-heading text-center mb-2">
+                            Create Account
+                        </h1>
+
+                        <p class="subtitle text-center mb-4">
+                            Join us to manage your assignments and practice
+                            aptitude questions.
+                        </p>
+
+                        <!-- ERROR MESSAGE -->
+                        {% if error %}
+                            <div class="error-box" role="alert">
+                                ⚠️ {{ error }}
+                            </div>
+                        {% endif %}
+
+                        <!-- REGISTER FORM -->
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                <label for="username" class="form-label">
+                                    Username
+                                </label>
+
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="username"
+                                    name="username"
+                                    placeholder="Enter username"
+                                    autocomplete="username"
+                                    required
+                                >
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    Email
+                                </label>
+
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Enter email address"
+                                    autocomplete="email"
+                                    required
+                                >
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    Password
+                                </label>
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Create a password"
+                                    autocomplete="new-password"
+                                    required
+                                >
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="confirm_password" class="form-label">
+                                    Confirm Password
+                                </label>
+
+                                <input
+                                    type="password"
+                                    class="form-control"
+                                    id="confirm_password"
+                                    name="confirm_password"
+                                    placeholder="Re-enter your password"
+                                    autocomplete="new-password"
+                                    required
+                                >
+                            </div>
+
+                            <button type="submit" class="btn signup-btn">
+                                ✨ Create Account →
+                            </button>
+
+                        </form>
+
+                        <!-- LOGIN LINK -->
+                        <div class="bottom-link text-center">
+                            Already have an account?
+
+                            <a href="{% url 'login' %}" class="ms-1">
+                                Login
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+                <p class="footer-note text-center">
+                    Smart Student Academic & Aptitude Tracker
+                </p>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
+

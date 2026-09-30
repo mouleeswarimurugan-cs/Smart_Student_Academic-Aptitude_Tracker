@@ -1,0 +1,718 @@
+
+{% extends "base.html" %}
+
+{% block title %}Assignments - Smart Assignment Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+    .assignment-page {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 15px 0;
+    }
+
+    /* HEADER */
+    .assignment-header {
+        background: linear-gradient(135deg, #1e1b4b, #312e81, #4c1d95);
+        padding: 28px 30px;
+        margin-bottom: 28px;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(30, 27, 75, 0.18);
+    }
+
+    .header-content h1 {
+        margin: 0;
+        color: white;
+        font-size: 29px;
+        font-weight: 700;
+    }
+
+    .header-content p {
+        margin: 8px 0 0;
+        color: #ddd6fe;
+        font-size: 14px;
+    }
+
+    .add-assignment-btn {
+        display: inline-block;
+        padding: 12px 20px;
+        border-radius: 10px;
+        background: white;
+        color: #4c1d95;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: 0.3s ease;
+    }
+
+    .add-assignment-btn:hover {
+        background: #ede9fe;
+        color: #4c1d95;
+        transform: translateY(-2px);
+    }
+
+    /* SEARCH AND FILTER */
+    .filter-card {
+        background: white;
+        border: 1px solid #e9e7f7;
+        border-radius: 18px;
+        padding: 25px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(49, 46, 129, 0.07);
+    }
+
+    .filter-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .filter-icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #ede9fe;
+        color: #6d28d9;
+        border-radius: 12px;
+        font-size: 21px;
+        flex-shrink: 0;
+    }
+
+    .filter-heading h3 {
+        margin: 0;
+        color: #1f1b3d;
+        font-size: 19px;
+        font-weight: 700;
+    }
+
+    .filter-heading p {
+        margin: 4px 0 0;
+        color: #8b879d;
+        font-size: 13px;
+    }
+
+    .filter-form label {
+        color: #514d68;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 7px;
+    }
+
+    .filter-form .form-control,
+    .filter-form .form-select {
+        min-height: 44px;
+        border: 1px solid #ddd9ed;
+        border-radius: 9px;
+        background-color: #fafaff;
+        color: #302c49;
+        font-size: 13px;
+    }
+
+    .filter-form .form-control:focus,
+    .filter-form .form-select:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10);
+    }
+
+    .search-btn {
+        min-height: 44px;
+        background: #6d28d9;
+        color: white;
+        border: 1px solid #6d28d9;
+        border-radius: 9px;
+        padding: 10px 18px;
+        font-size: 13px;
+        font-weight: 700;
+        transition: 0.3s ease;
+    }
+
+    .search-btn:hover {
+        background: #5b21b6;
+        color: white;
+        border-color: #5b21b6;
+    }
+
+    .clear-btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 18px;
+        border-radius: 9px;
+        background: #f4f2f9;
+        color: #514d68;
+        border: 1px solid #e5e1ef;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .clear-btn:hover {
+        background: #e9e5f2;
+        color: #302c49;
+    }
+
+    /* ASSIGNMENT CARDS */
+    .assignment-card {
+        height: 100%;
+        position: relative;
+        background: white;
+        border: 1px solid #ebe8f5;
+        border-radius: 17px;
+        padding: 23px;
+        overflow: hidden;
+        box-shadow: 0 7px 25px rgba(49, 46, 129, 0.06);
+        transition: 0.3s ease;
+    }
+
+    .assignment-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #6d28d9, #8b5cf6, #c084fc);
+    }
+
+    .assignment-card:hover {
+        transform: translateY(-5px);
+        border-color: #ddd6fe;
+        box-shadow: 0 15px 35px rgba(49, 46, 129, 0.12);
+    }
+
+    .subject-badge {
+        display: inline-block;
+        max-width: 100%;
+        padding: 6px 11px;
+        border-radius: 20px;
+        background: #f3e8ff;
+        color: #7e22ce;
+        font-size: 12px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .assignment-card h3 {
+        margin: 15px 0 9px;
+        color: #211d38;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .description {
+        color: #77738a;
+        font-size: 13px;
+        line-height: 1.7;
+        margin: 0 0 18px;
+        overflow-wrap: anywhere;
+        white-space: pre-line;
+    }
+
+    .details-box {
+        padding: 13px;
+        border-radius: 12px;
+        background: #faf9fd;
+        border: 1px solid #eeeaf6;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 7px 0;
+        font-size: 13px;
+    }
+
+    .detail-label {
+        color: #888398;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .detail-value {
+        color: #39344e;
+        font-weight: 600;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .priority,
+    .status {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .priority-high {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .priority-medium {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+
+    .priority-low {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .status-pending {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .status-progress {
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .status-completed {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    /* ATTACHMENT */
+    .attachment {
+        display: block;
+        margin-top: 15px;
+        padding: 11px 12px;
+        border-radius: 9px;
+        background: #f5f3ff;
+        color: #6d28d9;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .attachment:hover {
+        background: #ede9fe;
+        color: #5b21b6;
+    }
+
+    /* ACTION BUTTONS */
+    .button-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        transition: 0.25s ease;
+    }
+
+    .edit-btn {
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .edit-btn:hover {
+        background: #ddd6fe;
+        color: #5b21b6;
+    }
+
+    .delete-btn {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .delete-btn:hover {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+        text-align: center;
+        padding: 55px 20px;
+        background: white;
+        border: 1px dashed #d9d4e8;
+        border-radius: 18px;
+    }
+
+    .empty-icon {
+        font-size: 45px;
+        margin-bottom: 12px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 8px;
+        color: #332e4d;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    .empty-state p {
+        margin: 0 0 20px;
+        color: #888398;
+        font-size: 14px;
+    }
+
+    .empty-add-btn {
+        display: inline-block;
+        padding: 11px 18px;
+        background: #6d28d9;
+        color: white;
+        text-decoration: none;
+        border-radius: 9px;
+        font-weight: 700;
+    }
+
+    .empty-add-btn:hover {
+        background: #5b21b6;
+        color: white;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 767px) {
+        .assignment-page {
+            padding: 10px 0;
+        }
+
+        .assignment-header {
+            padding: 23px;
+        }
+
+        .header-content h1 {
+            font-size: 24px;
+        }
+
+        .add-assignment-btn {
+            display: block;
+            text-align: center;
+            width: 100%;
+        }
+
+        .filter-card {
+            padding: 18px;
+        }
+
+        .assignment-card {
+            padding: 20px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .button-group {
+            grid-template-columns: 1fr;
+        }
+
+        .assignment-header {
+            padding: 19px;
+        }
+
+        .filter-heading h3 {
+            font-size: 17px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="assignment-page">
+
+        <!-- HEADER -->
+        <div class="assignment-header">
+            <div class="row align-items-center g-3">
+                <div class="col-12 col-md">
+                    <div class="header-content">
+                        <h1> My Assignments</h1>
+                        <p>
+                            Manage, search and track your assignments easily.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-auto">
+                    <a href="{% url 'add_assignment' %}"
+                       class="add-assignment-btn">
+                        ＋ Add Assignment
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="filter-card">
+
+            <div class="filter-heading">
+                <div class="filter-icon">🔍</div>
+
+                <div>
+                    <h3>Search &amp; Filter</h3>
+                    <p>Find assignments by title, subject, priority or status.</p>
+                </div>
+            </div>
+
+            <form method="GET"
+                  action="{% url 'assignment_list' %}"
+                  class="filter-form">
+
+                <div class="row g-3 align-items-end">
+
+                    <!-- SEARCH -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label for="search" class="form-label">
+                            Search Assignment
+                        </label>
+
+                        <input
+                            type="text"
+                            id="search"
+                            name="search"
+                            class="form-control"
+                            placeholder="Search title or description..."
+                            value="{{ search|default:'' }}"
+                        >
+                    </div>
+
+                    <!-- SUBJECT -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <label for="subject" class="form-label">
+                            Subject
+                        </label>
+
+                        <select id="subject"
+                                name="subject"
+                                class="form-select">
+
+                            <option value="">All Subjects</option>
+
+                            {% for subject in subjects %}
+                                <option
+                                    value="{{ subject.id }}"
+                                    {% if selected_subject == subject.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ subject.name|default:subject.subject_name }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <!-- PRIORITY -->
+                    <div class="col-12 col-md-6 col-lg-2">
+                        <label for="priority" class="form-label">
+                            Priority
+                        </label>
+
+                        <select id="priority"
+                                name="priority"
+                                class="form-select">
+
+                            <option value="">All Priorities</option>
+
+                            <option value="High"
+                                {% if selected_priority == "High" %}selected{% endif %}>
+                                High
+                            </option>
+
+                            <option value="Medium"
+                                {% if selected_priority == "Medium" %}selected{% endif %}>
+                                Medium
+                            </option>
+
+                            <option value="Low"
+                                {% if selected_priority == "Low" %}selected{% endif %}>
+                                Low
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <!-- STATUS -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <label for="status" class="form-label">
+                            Status
+                        </label>
+
+                        <select id="status"
+                                name="status"
+                                class="form-select">
+
+                            <option value="">All Statuses</option>
+
+                            <option value="Pending"
+                                {% if selected_status == "Pending" %}selected{% endif %}>
+                                Pending
+                            </option>
+
+                            <option value="In Progress"
+                                {% if selected_status == "In Progress" %}selected{% endif %}>
+                                In Progress
+                            </option>
+
+                            <option value="Completed"
+                                {% if selected_status == "Completed" %}selected{% endif %}>
+                                Completed
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <!-- BUTTONS -->
+                    <div class="col-12 col-md-6 col-lg-2">
+                        <button type="submit"
+                                class="btn search-btn w-100">
+                             Search
+                        </button>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-2">
+                        <a href="{% url 'assignment_list' %}"
+                           class="clear-btn w-100">
+                            Clear Filters
+                        </a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+
+        <div class="row g-4">
+
+            {% for assignment in assignments %}
+
+                <div class="col-12 col-md-6 col-xl-4">
+                    <div class="assignment-card">
+
+                        <!-- SUBJECT -->
+                        <span class="subject-badge">
+                             {{ assignment.subject_name|default:assignment.subject }}
+                        </span>
+
+                        <!-- TITLE -->
+                        <h3>{{ assignment.title }}</h3>
+
+
+                        <p class="description">
+                            {{ assignment.description|default:"No description provided." }}
+                        </p>
+
+                        <!-- DETAILS -->
+                        <div class="details-box">
+
+                            <div class="detail-row">
+                                <span class="detail-label">Due Date</span>
+                                <span class="detail-value">
+                                    {{ assignment.due_date|date:"d M Y" }}
+                                </span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Priority</span>
+                                <span class="detail-value">
+                                    <span class="priority
+                                        {% if assignment.priority == 'High' %}priority-high
+                                        {% elif assignment.priority == 'Medium' %}priority-medium
+                                        {% else %}priority-low{% endif %}">
+                                        {{ assignment.priority }}
+                                    </span>
+                                </span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Status</span>
+                                <span class="detail-value">
+                                    <span class="status
+                                        {% if assignment.status == 'Pending' %}status-pending
+                                        {% elif assignment.status == 'In Progress' %}status-progress
+                                        {% else %}status-completed{% endif %}">
+                                        {{ assignment.status }}
+                                    </span>
+                                </span>
+                            </div>
+
+                            <div class="detail-row">
+                                <span class="detail-label">Student</span>
+                                <span class="detail-value">
+                                    {{ assignment.name }}
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        {% if assignment.attachment %}
+                            <a href="{{ assignment.attachment.url }}"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="attachment">
+                                 View Attachment
+                            </a>
+                        {% endif %}
+
+
+                        <div class="button-group">
+
+                            <a href="{% url 'edit_assignment' assignment.id %}"
+                               class="edit-btn">
+                                 Edit
+                            </a>
+
+                            <a href="{% url 'delete_assignment' assignment.id %}"
+                               class="delete-btn">
+                                 Delete
+                            </a>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            {% empty %}
+
+               
+                <div class="col-12">
+                    <div class="empty-state">
+
+                        
+
+                        <h3>No Assignments Found</h3>
+
+                        <p>
+                            No assignments match your current search or filters.
+                            Try changing your filters or add a new assignment.
+                        </p>
+
+                        <a href="{% url 'add_assignment' %}"
+                           class="empty-add-btn">
+                            ＋ Add Assignment
+                        </a>
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

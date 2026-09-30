@@ -1,0 +1,321 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Aptitude Questions{% endblock %}
+
+{% block content %}
+
+<style>
+    .aptitude-page {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px 12px;
+    }
+
+    .aptitude-header {
+        padding: 28px 30px;
+        margin-bottom: 28px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #1e1b4b, #4c1d95);
+        box-shadow: 0 10px 30px rgba(30, 27, 75, 0.15);
+    }
+
+    .aptitude-header h1 {
+        color: #ffffff;
+        font-size: 30px;
+        font-weight: 800;
+        margin-bottom: 10px;
+        overflow-wrap: anywhere;
+    }
+
+    .aptitude-header p {
+        color: #ddd6fe;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 0;
+    }
+
+    .question-card {
+        background: #ffffff;
+        padding: 25px 28px;
+        margin-bottom: 22px;
+        border: 1px solid #e6e0f5;
+        border-left: 5px solid #7654d6;
+        border-radius: 14px;
+        box-shadow: 0 5px 18px rgba(53, 33, 109, 0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .question-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 9px 24px rgba(53, 33, 109, 0.12);
+    }
+
+    .question-number {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #eee8ff;
+        color: #5035a5;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .question-card h3 {
+        color: #35216d;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.7;
+        margin: 0 0 22px;
+        overflow-wrap: anywhere;
+    }
+
+    .option-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+        color: #403853;
+        background: #f8f6ff;
+        border: 1px solid #e6e0f5;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1.7;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .option-label:hover {
+        background: #eee8ff;
+        border-color: #7654d6;
+    }
+
+    .option-label input[type="radio"] {
+        width: 17px;
+        height: 17px;
+        margin-top: 4px;
+        accent-color: #6541bd;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .option-label:has(input[type="radio"]:checked) {
+        background: #eee8ff;
+        border-color: #7654d6;
+        color: #35216d;
+    }
+
+    .error-message {
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        border: 1px solid #ffd1d1;
+        border-radius: 9px;
+        background: #fff0f0;
+        color: #b42318;
+        font-size: 14px;
+    }
+
+    .empty-message {
+        padding: 30px 20px;
+        text-align: center;
+        background: #ffffff;
+        border: 1px solid #e6e0f5;
+        border-radius: 14px;
+        color: #625d72;
+    }
+
+    .aptitude-btn {
+        display: inline-block;
+        padding: 12px 22px;
+        border: 1px solid #5035a5;
+        border-radius: 9px;
+        background: #5035a5;
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .aptitude-btn:hover {
+        background: #35216d;
+        border-color: #35216d;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    .aptitude-btn.secondary {
+        background: #eee8ff;
+        color: #5035a5;
+        border-color: #ded2ff;
+    }
+
+    .aptitude-btn.secondary:hover {
+        background: #ded2ff;
+        color: #35216d;
+    }
+
+    .form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 25px 0;
+    }
+
+    @media (max-width: 576px) {
+        .aptitude-page {
+            padding: 12px 4px;
+        }
+
+        .aptitude-header {
+            padding: 23px 20px;
+        }
+
+        .aptitude-header h1 {
+            font-size: 24px;
+        }
+
+        .question-card {
+            padding: 20px 16px;
+        }
+
+        .question-card h3 {
+            font-size: 16px;
+        }
+
+        .option-label {
+            padding: 12px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .aptitude-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="container aptitude-page">
+
+    <!-- Page Header -->
+    <div class="aptitude-header">
+        <h1>📝 {{ category.category_name }}</h1>
+        <p>
+            Read each question carefully and select one answer.
+            Review your choices before submitting your test.
+        </p>
+    </div>
+
+    <!-- Error Message -->
+    {% if error %}
+        <div class="error-message" role="alert">
+            ⚠️ {{ error }}
+        </div>
+    {% endif %}
+
+    <!-- Questions Form -->
+    {% if questions %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for question in questions %}
+
+                <div class="question-card">
+
+                    <span class="question-number">
+                        Question {{ forloop.counter }}
+                    </span>
+
+                    <h3>
+                        {{ question.question }}
+                    </h3>
+
+                    <!-- Option A -->
+                    <label class="option-label">
+                        <input
+                            type="radio"
+                            name="answer_{{ question.id }}"
+                            value="A"
+                            required
+                        >
+                        <span>
+                            <strong>A.</strong> {{ question.option_a }}
+                        </span>
+                    </label>
+
+                    <!-- Option B -->
+                    <label class="option-label">
+                        <input
+                            type="radio"
+                            name="answer_{{ question.id }}"
+                            value="B"
+                            required
+                        >
+                        <span>
+                            <strong>B.</strong> {{ question.option_b }}
+                        </span>
+                    </label>
+
+                    <!-- Option C -->
+                    <label class="option-label">
+                        <input
+                            type="radio"
+                            name="answer_{{ question.id }}"
+                            value="C"
+                            required
+                        >
+                        <span>
+                            <strong>C.</strong> {{ question.option_c }}
+                        </span>
+                    </label>
+
+                </div>
+
+            {% endfor %}
+
+            <!-- Form Buttons -->
+            <div class="form-actions">
+
+                <button type="submit" class="btn aptitude-btn">
+                    Submit Answers
+                </button>
+
+                <a
+                    href="{% url 'aptitude_dashboard' %}"
+                    class="btn aptitude-btn secondary"
+                >
+                    Back to Categories
+                </a>
+
+            </div>
+
+        </form>
+
+    {% else %}
+
+        <div class="empty-message">
+            <h4 class="mb-2">No Questions Available</h4>
+            <p class="mb-3">
+                There are currently no questions available in this category.
+            </p>
+
+            <a
+                href="{% url 'aptitude_dashboard' %}"
+                class="btn aptitude-btn"
+            >
+                Back to Categories
+            </a>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+

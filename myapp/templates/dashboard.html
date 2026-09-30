@@ -1,0 +1,530 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard - Smart Student Academic & Aptitude Tracker
+{% endblock %}
+
+{% block content %}
+
+<style>
+   
+    .dashboard-page {
+        max-width: 1250px;
+        margin: auto;
+    }
+
+   
+    .dashboard-header {
+        position: relative;
+        overflow: hidden;
+        padding: 30px;
+        margin-bottom: 28px;
+        border-radius: 18px;
+        background: linear-gradient(
+            135deg,
+            #1e1b4b,
+            #312e81,
+            #4c1d95
+        );
+        box-shadow: 0 10px 30px rgba(30, 27, 75, 0.18);
+    }
+
+    .dashboard-header::after {
+        content: "";
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        right: -60px;
+        top: -80px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .dashboard-header h1 {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        color: #ffffff;
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .dashboard-header p {
+        position: relative;
+        z-index: 1;
+        margin: 10px 0 0;
+        color: #ddd6fe;
+        font-size: 14px;
+    }
+
+    /* Statistics cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        min-width: 0;
+        padding: 22px;
+        border: 1px solid #ebe7f6;
+        border-top: 4px solid #6d28d9;
+        border-radius: 16px;
+        box-shadow: 0 7px 25px rgba(49, 46, 129, 0.06);
+        transition: transform 0.3s ease,
+                    box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(49, 46, 129, 0.12);
+    }
+
+    .stat-card h3 {
+        margin: 0 0 12px;
+        color: #77738a;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .stat-number {
+        margin: 0;
+        color: #211d38;
+        font-size: 32px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .pending-card {
+        border-top-color: #f59e0b;
+    }
+
+    .completed-card {
+        border-top-color: #16a34a;
+    }
+
+    .overdue-card {
+        border-top-color: #dc2626;
+    }
+
+    .high-card {
+        border-top-color: #7c3aed;
+    }
+
+    /* Recent assignments section */
+    .assignment-section {
+        background: #ffffff;
+        padding: 28px;
+        border: 1px solid #ebe7f6;
+        border-radius: 18px;
+        box-shadow: 0 7px 25px rgba(49, 46, 129, 0.06);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .section-header h2 {
+        margin: 0;
+        color: #211d38;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    .view-all {
+        display: inline-block;
+        flex-shrink: 0;
+        background: #ede9fe;
+        color: #6d28d9;
+        padding: 10px 15px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+        transition: background 0.3s ease;
+    }
+
+    .view-all:hover {
+        background: #ddd6fe;
+        color: #4c1d95;
+    }
+
+    /* Assignment table */
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .assignment-table {
+        width: 100%;
+        min-width: 650px;
+        border-collapse: collapse;
+        margin-bottom: 0;
+    }
+
+    .assignment-table th {
+        background: #f5f3ff;
+        color: #514d68;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 15px;
+        text-align: left;
+        white-space: nowrap;
+        border-bottom: 2px solid #eeeaf6;
+    }
+
+    .assignment-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eeeaf6;
+        color: #77738a;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .assignment-table tbody tr:hover {
+        background: #faf9ff;
+    }
+
+    .assignment-title {
+        color: #211d38;
+        font-weight: 700;
+    }
+
+    .subject-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        background: #f3e8ff;
+        color: #7e22ce;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .priority,
+    .status {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .priority-high {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .priority-medium {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .priority-low {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+
+    .status-completed {
+        background: #ecfdf5;
+        color: #047857;
+    }
+
+    .status-pending {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .status-progress {
+        background: #eff6ff;
+        color: #2563eb;
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 45px 20px;
+        color: #77738a;
+    }
+
+    .empty-icon {
+        font-size: 42px;
+        margin-bottom: 12px;
+    }
+
+    .empty-message h3 {
+        margin: 0 0 10px;
+        color: #332e4d;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .empty-message p {
+        margin: 0 0 22px;
+        color: #77738a;
+        font-size: 14px;
+    }
+
+
+    @media (max-width: 1050px) {
+        .stats-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+ 
+    @media (max-width: 650px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .dashboard-header {
+            padding: 24px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 25px;
+        }
+
+        .stat-card {
+            padding: 17px;
+        }
+
+        .stat-number {
+            font-size: 27px;
+        }
+
+        .assignment-section {
+            padding: 20px 15px;
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-header {
+            padding: 22px 18px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 23px;
+        }
+
+        .section-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .stat-card {
+            padding: 18px;
+        }
+    }
+</style>
+
+<div class="dashboard-page">
+
+   
+    <div class="dashboard-header">
+        <h1> Dashboard</h1>
+
+        <p>
+            Welcome to your Smart Student Academic & Aptitude Tracker.
+            Manage your assignments and track your progress.
+        </p>
+    </div>
+
+   
+    
+    <div class="stats-grid">
+
+        
+        <div class="stat-card">
+            <h3>📚 Total Assignments</h3>
+            <p class="stat-number">
+                {{ total_assignments }}
+            </p>
+        </div>
+
+        <div class="stat-card pending-card">
+            <h3>⏳ Pending</h3>
+            <p class="stat-number">
+                {{ pending_assignments }}
+            </p>
+        </div>
+
+       
+        <div class="stat-card completed-card">
+            <h3>✅ Completed</h3>
+            <p class="stat-number">
+                {{ completed_assignments }}
+            </p>
+        </div>
+
+       
+        <div class="stat-card overdue-card">
+            <h3>⚠️ Overdue</h3>
+            <p class="stat-number">
+                {{ overdue_assignments }}
+            </p>
+        </div>
+
+        <!-- High Priority Assignments -->
+        <div class="stat-card high-card">
+            <h3>🔥 High Priority</h3>
+            <p class="stat-number">
+                {{ high_priority_assignments }}
+            </p>
+        </div>
+
+    </div>
+
+    
+    <div class="assignment-section">
+
+        <div class="section-header">
+            <h2> Recent Assignments</h2>
+
+            <a href="{% url 'assignment_list' %}"
+               class="view-all">
+                View All →
+            </a>
+        </div>
+
+        {% if assignments %}
+
+            <div class="table-wrapper">
+
+                <table class="assignment-table">
+
+                    <thead>
+                        <tr>
+                            <th>Assignment</th>
+                            <th>Subject</th>
+                            <th>Due Date</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for assignment in assignments %}
+
+                            <tr>
+
+                               
+                                <td>
+                                    <span class="assignment-title">
+                                        {{ assignment.title }}
+                                    </span>
+                                </td>
+
+                                <!-- Subject -->
+                                <td>
+                                    <span class="subject-badge">
+                                        {{ assignment.subject_name|default:assignment.subject }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ assignment.due_date }}
+                                </td>
+
+
+                                <td>
+                                    {% if assignment.priority == "High" %}
+
+                                        <span class="priority priority-high">
+                                            High
+                                        </span>
+
+                                    {% elif assignment.priority == "Medium" %}
+
+                                        <span class="priority priority-medium">
+                                            Medium
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="priority priority-low">
+                                            Low
+                                        </span>
+
+                                    {% endif %}
+                                </td>
+
+                                <!-- Status -->
+                                <td>
+                                    {% if assignment.status == "Completed" %}
+
+                                        <span class="status status-completed">
+                                            Completed
+                                        </span>
+
+                                    {% elif assignment.status == "Pending" %}
+
+                                        <span class="status status-pending">
+                                            Pending
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="status status-progress">
+                                            In Progress
+                                        </span>
+
+                                    {% endif %}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+
+            <div class="empty-message">
+
+                <div class="empty-icon">📝</div>
+
+                <h3>No Assignments Found</h3>
+
+                <p>
+                    You haven't added any assignments yet.
+                    Start by adding your first assignment.
+                </p>
+
+                <a href="{% url 'add_assignment' %}"
+                   class="btn btn-primary">
+                    + Add Assignment
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

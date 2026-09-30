@@ -1,0 +1,416 @@
+
+{% extends "base.html" %}
+
+{% block title %}Edit Assignment - Smart Assignment Tracker{% endblock %}
+
+{% block content %}
+
+<style>
+    .form-page {
+        max-width: 950px;
+        margin: 30px auto;
+    }
+
+    .form-header {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #1e1b4b, #312e81, #4c1d95);
+        padding: 28px 30px;
+        border-radius: 18px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(30, 27, 75, 0.18);
+    }
+
+    .form-header::after {
+        content: "";
+        position: absolute;
+        width: 160px;
+        height: 160px;
+        right: -55px;
+        top: -70px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-header h1 {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .form-header p {
+        position: relative;
+        z-index: 1;
+        margin: 8px 0 0;
+        color: #ddd6fe;
+        font-size: 14px;
+    }
+
+    .form-card {
+        background: white;
+        padding: 32px;
+        border-radius: 18px;
+        border: 1px solid #ebe8f5;
+        box-shadow: 0 8px 28px rgba(49, 46, 129, 0.07);
+    }
+
+    .form-label {
+        color: #514d68;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        padding: 12px 14px;
+        border: 1px solid #ddd9ed;
+        border-radius: 9px;
+        background-color: #fafaff;
+        color: #302c49;
+        font-size: 14px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #7c3aed;
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10);
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    .error-message {
+        background: #fef2f2;
+        color: #dc2626;
+        padding: 12px 15px;
+        border-radius: 9px;
+        margin-bottom: 22px;
+        border: 1px solid #fecaca;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .current-file {
+        margin-top: 10px;
+        padding: 12px;
+        background: #f5f3ff;
+        border: 1px solid #ede9fe;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #514d68;
+        overflow-wrap: anywhere;
+    }
+
+    .current-file a {
+        color: #6d28d9;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .current-file a:hover {
+        text-decoration: underline;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+        padding-top: 22px;
+        border-top: 1px solid #eeeaf6;
+    }
+
+    .update-btn {
+        background: #6d28d9;
+        color: white;
+        border: 1px solid #6d28d9;
+        padding: 12px 22px;
+        border-radius: 9px;
+        font-size: 14px;
+        font-weight: 700;
+        transition: 0.3s ease;
+    }
+
+    .update-btn:hover {
+        background: #5b21b6;
+        border-color: #5b21b6;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 7px 18px rgba(109, 40, 217, 0.20);
+    }
+
+    .cancel-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f4f2f9;
+        color: #514d68;
+        text-decoration: none;
+        padding: 12px 22px;
+        border: 1px solid #e5e1ef;
+        border-radius: 9px;
+        font-size: 14px;
+        font-weight: 700;
+        transition: 0.3s ease;
+    }
+
+    .cancel-btn:hover {
+        background: #e9e5f2;
+        color: #302c49;
+    }
+
+    @media (max-width: 576px) {
+        .form-page {
+            margin: 20px auto;
+        }
+
+        .form-header {
+            padding: 23px;
+        }
+
+        .form-header h1 {
+            font-size: 24px;
+        }
+
+        .form-card {
+            padding: 22px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .update-btn,
+        .cancel-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="form-page">
+
+
+        <div class="form-header">
+            <h1> Edit Assignment</h1>
+            <p>Update your assignment details and save your changes.</p>
+        </div>
+
+        <div class="form-card">
+
+            {% if error %}
+                <div class="error-message" role="alert">
+                    ⚠️ {{ error }}
+                </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Assignment Title -->
+                <div class="mb-4">
+                    <label for="title" class="form-label">
+                        Assignment Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        class="form-control"
+                        value="{{ assignment.title }}"
+                        placeholder="Enter assignment title"
+                        required
+                    >
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="subject" class="form-label">
+                            Subject
+                        </label>
+
+                        <select
+                            id="subject"
+                            name="subject"
+                            class="form-select"
+                            required
+                        >
+                            <option value="">Select Subject</option>
+
+                            {% for subject in subjects %}
+                                <option
+                                    value="{{ subject.id }}"
+                                    {% if subject.id == assignment.subject_id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ subject.name|default:subject.subject_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="name" class="form-label">
+                            Student Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            class="form-control"
+                            value="{{ assignment.name }}"
+                            placeholder="Enter student name"
+                            required
+                        >
+                    </div>
+                </div>
+
+
+                <div class="mb-4">
+                    <label for="description" class="form-label">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        class="form-control"
+                        placeholder="Enter assignment description"
+                        required
+                    >{{ assignment.description }}</textarea>
+                </div>
+
+                <!-- Due Date and Priority -->
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="due_date" class="form-label">
+                            Due Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="due_date"
+                            name="due_date"
+                            class="form-control"
+                            value="{{ assignment.due_date|date:'Y-m-d' }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="priority" class="form-label">
+                            Priority
+                        </label>
+
+                        <select
+                            id="priority"
+                            name="priority"
+                            class="form-select"
+                            required
+                        >
+                            <option value="High"
+                                {% if assignment.priority == "High" %}selected{% endif %}>
+                                High
+                            </option>
+
+                            <option value="Medium"
+                                {% if assignment.priority == "Medium" %}selected{% endif %}>
+                                Medium
+                            </option>
+
+                            <option value="Low"
+                                {% if assignment.priority == "Low" %}selected{% endif %}>
+                                Low
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="status" class="form-label">
+                            Status
+                        </label>
+
+                        <select
+                            id="status"
+                            name="status"
+                            class="form-select"
+                            required
+                        >
+                            <option value="Pending"
+                                {% if assignment.status == "Pending" %}selected{% endif %}>
+                                Pending
+                            </option>
+
+                            <option value="In Progress"
+                                {% if assignment.status == "In Progress" %}selected{% endif %}>
+                                In Progress
+                            </option>
+
+                            <option value="Completed"
+                                {% if assignment.status == "Completed" %}selected{% endif %}>
+                                Completed
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="attachment" class="form-label">
+                            Attachment
+                        </label>
+
+                        <input
+                            type="file"
+                            id="attachment"
+                            name="attachment"
+                            class="form-control"
+                        >
+
+                        {% if assignment.attachment %}
+                            <div class="current-file">
+                                📎 Current attachment:
+                                <a href="{{ assignment.attachment.url }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer">
+                                    View Attachment
+                                </a>
+                            </div>
+                        {% endif %}
+
+                        <div class="form-text">
+                            Choose a file only if you want to upload a new attachment.
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn update-btn">
+                         Update Assignment
+                    </button>
+
+                    <a href="{% url 'assignment_list' %}" class="cancel-btn">
+                        ← Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

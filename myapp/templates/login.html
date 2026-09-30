@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - Smart Student Academic & Aptitude Tracker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(124,58,237,0.10), transparent 35%),
+                radial-gradient(circle at bottom right, rgba(49,46,129,0.10), transparent 35%),
+                #f7f5fc;
+            color: #211d38;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            min-height: 72px;
+            padding: 15px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            background: linear-gradient(135deg, #1e1b4b, #312e81, #4c1d95);
+            box-shadow: 0 5px 20px rgba(30,27,75,0.18);
+        }
+
+        .logo {
+            color: white;
+            text-decoration: none;
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .logo:hover {
+            color: #ddd6fe;
+        }
+
+        .home-btn {
+            color: #f5f3ff;
+            text-decoration: none;
+            padding: 10px 17px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .home-btn:hover {
+            background: rgba(255,255,255,0.14);
+        }
+
+        /* LOGIN CONTAINER */
+        .container {
+            width: 450px;
+            max-width: calc(100% - 32px);
+            margin: 65px auto;
+        }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            background: white;
+            padding: 38px 35px;
+            border-radius: 18px;
+            border: 1px solid #ebe8f5;
+            box-shadow: 0 12px 35px rgba(49,46,129,0.10);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #6d28d9, #8b5cf6, #c084fc);
+        }
+
+        
+
+        h1 {
+            text-align: center;
+            color: #332e4d;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #77738a;
+            margin-bottom: 30px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ERROR MESSAGE */
+        .error-box {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 12px 14px;
+            border-radius: 9px;
+            margin-bottom: 20px;
+            border: 1px solid #fecaca;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* FORM */
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 9px;
+            color: #514d68;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd9ed;
+            border-radius: 9px;
+            background: #fafaff;
+            color: #302c49;
+            font-size: 14px;
+            outline: none;
+            transition: 0.25s;
+        }
+
+        input::placeholder {
+            color: #aaa6b8;
+        }
+
+        input:focus {
+            border-color: #7c3aed;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.10);
+        }
+
+        /* LOGIN BUTTON */
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #6d28d9, #4c1d95);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 7px 18px rgba(109,40,217,0.18);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(109,40,217,0.24);
+        }
+
+        /* SIGN UP LINK */
+        .bottom-link {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeaf6;
+            color: #77738a;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .bottom-link a {
+            color: #6d28d9;
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        .bottom-link a:hover {
+            color: #4c1d95;
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 22px;
+            color: #8b879b;
+            font-size: 12px;
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                justify-content: center;
+                padding: 18px 16px;
+            }
+
+            .logo {
+                text-align: center;
+                font-size: 16px;
+                line-height: 1.5;
+            }
+
+            .container {
+                margin: 35px auto;
+            }
+
+            .card {
+                padding: 32px 22px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+   
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="logo">
+            🎓 Smart Student Academic & Aptitude Tracker
+        </a>
+
+        <a href="{% url 'home' %}" class="home-btn">
+             Home
+        </a>
+    </nav>
+
+    
+    <main class="container">
+        <div class="card">
+
+            
+
+            <h1>Welcome Back!</h1>
+
+            <p class="subtitle">
+                Login to manage your assignments and practice aptitude questions.
+            </p>
+
+            {% if error %}
+                <div class="error-box">
+                    ⚠️ {{ error }}
+                </div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="login-btn">
+                    Login to Your Account 
+                </button>
+            </form>
+
+            <div class="bottom-link">
+                Don't have an account?
+                <a href="{% url 'register' %}">Create Account</a>
+            </div>
+
+        </div>
+
+        <p class="footer-note">
+            Smart Student Academic & Aptitude Tracker
+        </p>
+    </main>
+
+</body>
+</html>
+
