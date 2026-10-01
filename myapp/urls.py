@@ -9,7 +9,7 @@ from . import views
 urlpatterns = [
 
     # Home
-    path("home/", home, name="home"),
+    path("", home, name="home"),
 
     # Authentication
     path("register/", register, name="register"),
