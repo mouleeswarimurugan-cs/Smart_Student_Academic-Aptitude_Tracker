@@ -4,12 +4,12 @@ from datetime import date
 import requests
 
 from django.contrib import messages
+from django.http import HttpResponse
+from django.shortcuts import render, redirect,get_list_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.http import HttpResponse
-from django.shortcuts import render, redirect,get_list_or_404
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -686,14 +686,18 @@ def delete_assignment(request, id):
 
 
 
-import requests
+
 from django.shortcuts import render
 
 def subject_list(request):
-    api_url = "https://YOUR-RENDER-APP.onrender.com/api/subject/"
+
+    api_url = (
+        "https://smart-student-academic-aptitude-tracker"
+        ".onrender.com/api/subject/"
+    )
 
     try:
-        response = requests.get(api_url, timeout=30)
+        response = requests.get(api_url, timeout=60)
         response.raise_for_status()
 
         data = response.json()
@@ -709,6 +713,10 @@ def subject_list(request):
         subjects = []
         error = f"Unable to load subjects: {e}"
 
+    except ValueError:
+        subjects = []
+        error = "Invalid response received from Subject API."
+
     return render(
         request,
         "subject_list.html",
@@ -719,10 +727,6 @@ def subject_list(request):
     )
 
 
-    import requests
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
 
 
 def add_subject(request):
