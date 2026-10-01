@@ -33,7 +33,7 @@ urlpatterns = [
 
 
     #api
-    path("api/subject/",SubjectAPIView.as_view(),name="subject_api"),
+    path("subject/", SubjectAPIView.as_view(), name="subject_api"),
     path("subject/<int:id>/",SubjectviewById.as_view()),
     path("assignment/",AssignmentAPIView.as_view()),
     path("assignment/<int:id>/",AssignmentViewById.as_view()),
