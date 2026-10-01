@@ -720,7 +720,9 @@ def subject_list(request):
 
 
 def add_subject(request):
-    api_url = "https://YOUR-RENDER-APP.onrender.com/api/subject/"
+
+    api_url = "https://smart-student-academic-aptitude-tracker.onrender.com/api/subject/"
+
     if request.method == "GET":
         return render(request, "subject_form.html")
 
@@ -736,13 +738,11 @@ def add_subject(request):
             "error": "Subject name must be within 30 characters."
         })
 
-    api_url = "https://YOUR-RENDER-APP.onrender.com/api/subject/"
-
     try:
         response = requests.post(
             api_url,
             json={"subject_name": subject_name},
-            timeout=30
+            timeout=60
         )
 
         if response.status_code in (200, 201):
@@ -750,7 +750,10 @@ def add_subject(request):
             return redirect("subject_list")
 
         return render(request, "subject_form.html", {
-            "error": f"Unable to save subject: {response.text}"
+            "error": (
+                f"Unable to save subject: "
+                f"HTTP {response.status_code} - {response.text}"
+            )
         })
 
     except requests.RequestException as e:
@@ -758,7 +761,7 @@ def add_subject(request):
             "error": f"API connection failed: {e}"
         })
 
-
+    
 def edit_subject(request, id):
     api_url = f"http://127.0.0.1:8000/api/subject/{id}/"
 
