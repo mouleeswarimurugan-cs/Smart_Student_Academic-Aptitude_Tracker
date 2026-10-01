@@ -690,17 +690,24 @@ import requests
 from django.shortcuts import render
 
 def subject_list(request):
-    api_url = "https://your-project-name.onrender.com/api/subject/"
+    api_url = "https://YOUR-RENDER-APP.onrender.com/api/subject/"
 
     try:
-        response = requests.get(api_url, timeout=20)
+        response = requests.get(api_url, timeout=30)
         response.raise_for_status()
-        subjects = response.json()
+
+        data = response.json()
+
+        if isinstance(data, dict) and "results" in data:
+            subjects = data["results"]
+        else:
+            subjects = data
+
         error = None
 
-    except requests.RequestException:
+    except requests.RequestException as e:
         subjects = []
-        error = "Unable to load subjects. Please try again."
+        error = f"Unable to load subjects: {e}"
 
     return render(
         request,
@@ -710,13 +717,6 @@ def subject_list(request):
             "error": error,
         }
     )
-
-
-# FRONTEND: ADD SUBJECT
-
-
-from django.shortcuts import render, redirect
-from .models import Subject
 
 
 def add_subject(request):
@@ -735,16 +735,29 @@ def add_subject(request):
             "error": "Subject name must be within 30 characters."
         })
 
-    try:
-        Subject.objects.create(subject_name=subject_name)
-        return redirect("subject_list")
+    api_url = "https://YOUR-RENDER-APP.onrender.com/api/subject/"
 
-    except Exception as e:
+    try:
+        response = requests.post(
+            api_url,
+            json={"subject_name": subject_name},
+            timeout=30
+        )
+
+        if response.status_code in (200, 201):
+            messages.success(request, "Subject added successfully!")
+            return redirect("subject_list")
+
         return render(request, "subject_form.html", {
-            "error": f"Unable to save subject: {e}"
+            "error": f"Unable to save subject: {response.text}"
         })
 
-    
+    except requests.RequestException as e:
+        return render(request, "subject_form.html", {
+            "error": f"API connection failed: {e}"
+        })
+
+
 def edit_subject(request, id):
     api_url = f"http://127.0.0.1:8000/api/subject/{id}/"
 
