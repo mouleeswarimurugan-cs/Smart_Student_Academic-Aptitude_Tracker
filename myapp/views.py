@@ -723,38 +723,28 @@ def add_subject(request):
     if request.method == "GET":
         return render(request, "subject_form.html")
 
-    if request.method == "POST":
-        subject_name = request.POST.get(
-            "subject_name", ""
-        ).strip()
+    subject_name = request.POST.get("subject_name", "").strip()
 
-        if not subject_name:
-            return render(
-                request,
-                "subject_form.html",
-                {"error": "Please enter a subject name."}
-            )
+    if not subject_name:
+        return render(request, "subject_form.html", {
+            "error": "Please enter a subject name."
+        })
 
-        if len(subject_name) > 30:
-            return render(
-                request,
-                "subject_form.html",
-                {"error": "Subject name must be within 30 characters."}
-            )
+    if len(subject_name) > 30:
+        return render(request, "subject_form.html", {
+            "error": "Subject name must be within 30 characters."
+        })
 
-        try:
-            Subject.objects.create(name=subject_name)
+    try:
+        Subject.objects.create(subject_name=subject_name)
+        return redirect("subject_list")
 
-            return redirect("subject_list")
+    except Exception as e:
+        return render(request, "subject_form.html", {
+            "error": f"Unable to save subject: {e}"
+        })
 
-        except Exception as e:
-            return render(
-                request,
-                "subject_form.html",
-                {"error": f"Unable to save subject: {e}"}
-            )
-
-
+    
 def edit_subject(request, id):
     api_url = f"http://127.0.0.1:8000/api/subject/{id}/"
 
