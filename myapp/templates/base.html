@@ -12,7 +12,7 @@
         {% endblock %}
     </title>
 
-    <!-- Bootstrap CSS only - No JavaScript -->
+    <!-- Bootstrap CSS only -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
         rel="stylesheet">
@@ -40,7 +40,7 @@
         }
 
         /* =========================
-           NAVBAR - LAPTOP & DESKTOP
+           NAVBAR - DESKTOP
         ========================= */
 
         .navbar-custom {
@@ -53,14 +53,14 @@
                 var(--primary-light)
             );
             box-shadow: 0 5px 20px rgba(30, 27, 75, 0.18);
-            padding: 18px 0;
+            padding: 16px 0;
         }
 
         .navbar-custom .container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 16px;
+            gap: 15px;
         }
 
         .navbar-brand {
@@ -77,19 +77,19 @@
             color: var(--accent);
         }
 
-        /* Desktop menu wrapper */
+        /* Hide checkbox */
 
-        .navbar-menu {
-            margin-left: auto;
+        .menu-checkbox {
+            display: none;
         }
 
-        /* Hide hamburger on laptop */
+        /* Hide hamburger on desktop */
 
         .menu-toggle {
             display: none;
         }
 
-        /* Desktop navigation links */
+        /* Desktop menu links - always visible */
 
         .navbar-links {
             display: flex;
@@ -98,7 +98,7 @@
             flex-wrap: wrap;
             gap: 5px;
             list-style: none;
-            margin: 0;
+            margin: 0 0 0 auto;
             padding: 0;
         }
 
@@ -221,6 +221,7 @@
 
         /* =========================
            TABLET
+           Keep all links visible
         ========================= */
 
         @media (min-width: 576px) and (max-width: 991.98px) {
@@ -233,27 +234,27 @@
                 font-size: 17px;
             }
 
-            .navbar-menu {
-                width: 100%;
-                margin-left: 0;
-            }
-
             .navbar-links {
+                width: 100%;
                 justify-content: flex-start;
             }
         }
 
         /* =========================
-           MOBILE HAMBURGER MENU
+           MOBILE NAVBAR
+           Hamburger icon only
         ========================= */
 
         @media (max-width: 575.98px) {
 
             .navbar-custom {
-                padding: 13px 0;
+                padding: 12px 0;
             }
 
             .navbar-custom .container {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
                 gap: 10px;
             }
 
@@ -263,70 +264,55 @@
                 min-width: 0;
             }
 
-            .navbar-menu {
-                position: relative;
-                margin-left: auto;
-                flex-shrink: 0;
-            }
-
-            /* Three-line hamburger icon */
+            /* Show three-line hamburger */
 
             .menu-toggle {
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
+                gap: 5px;
                 width: 44px;
                 height: 42px;
-                color: #ffffff;
-                font-size: 28px;
-                font-weight: bold;
-                cursor: pointer;
-                list-style: none;
-                line-height: 1;
-                border: 1px solid rgba(255, 255, 255, 0.45);
+                padding: 8px;
+                border: 1px solid rgba(255, 255, 255, 0.5);
                 border-radius: 8px;
+                cursor: pointer;
+                flex-shrink: 0;
                 user-select: none;
             }
 
-            .menu-toggle::-webkit-details-marker {
-                display: none;
-            }
-
-            .menu-toggle::marker {
-                content: "";
+            .menu-toggle span {
+                display: block;
+                width: 22px;
+                height: 2px;
+                background-color: #ffffff;
+                border-radius: 2px;
             }
 
             .menu-toggle:hover {
                 background: rgba(255, 255, 255, 0.15);
             }
 
-            /* Dropdown menu - hidden by default */
+            /* Hide mobile links initially */
 
             .navbar-links {
                 display: none;
-                position: absolute;
-                top: calc(100% + 13px);
-                right: 0;
-                width: min(260px, calc(100vw - 32px));
-                padding: 10px;
-                margin: 0;
-                background: linear-gradient(
-                    135deg,
-                    var(--primary-dark),
-                    var(--primary),
-                    var(--primary-light)
-                );
-                border-radius: 0 0 12px 12px;
-                box-shadow: 0 8px 22px rgba(30, 27, 75, 0.28);
                 flex-direction: column;
                 align-items: stretch;
+                justify-content: flex-start;
+                width: 100%;
+                margin: 0;
+                padding: 10px;
                 gap: 4px;
-                z-index: 2000;
+                background: var(--primary-dark);
+                border-radius: 10px;
+                box-shadow: 0 8px 20px rgba(30, 27, 75, 0.22);
             }
 
-            /* Show menu after tapping hamburger */
+            /* Show links when hamburger is checked */
 
-            .navbar-menu[open] .navbar-links {
+            .menu-checkbox:checked ~ .navbar-links {
                 display: flex;
             }
 
@@ -335,9 +321,9 @@
             }
 
             .navbar-links a {
-                display: block;
                 width: 100%;
-                padding: 13px 14px;
+                display: block;
+                padding: 12px 14px;
                 font-size: 14px;
                 text-align: left;
                 border-radius: 7px;
@@ -373,7 +359,10 @@
 
 <body>
 
-    <!-- TOP NAVIGATION -->
+    <!-- =========================
+         TOP NAVIGATION
+    ========================= -->
+
     <nav class="navbar-custom">
         <div class="container">
 
@@ -383,56 +372,66 @@
                 🎓 Smart Student Academic &amp; Aptitude Tracker
             </a>
 
-            <!-- Responsive navigation menu -->
-            <details class="navbar-menu">
+            <!-- Mobile hamburger checkbox -->
+            <input
+                type="checkbox"
+                id="menu-toggle"
+                class="menu-checkbox">
 
-                <!-- Hamburger icon: visible only on mobile -->
-                <summary class="menu-toggle"
-                         aria-label="Toggle navigation menu">
-                    ☰
-                </summary>
+            <!-- Three-line menu icon: mobile only -->
+            <label
+                for="menu-toggle"
+                class="menu-toggle"
+                aria-label="Toggle navigation menu">
 
-                <!-- Existing Django navigation links -->
-                <ul class="navbar-links">
+                <span></span>
+                <span></span>
+                <span></span>
 
-                    <li>
-                        <a href="{% url 'dashboard' %}">
-                            Dashboard
-                        </a>
-                    </li>
+            </label>
 
-                    <li>
-                        <a href="{% url 'subject_list' %}">
-                            Subjects
-                        </a>
-                    </li>
+            <!-- Navigation links -->
+            <ul class="navbar-links">
 
-                    <li>
-                        <a href="{% url 'assignment_list' %}">
-                            Assignments
-                        </a>
-                    </li>
+                <li>
+                    <a href="{% url 'dashboard' %}">
+                        Dashboard
+                    </a>
+                </li>
 
-                    <li>
-                        <a href="{% url 'aptitude_dashboard' %}">
-                            Aptitude
-                        </a>
-                    </li>
+                <li>
+                    <a href="{% url 'subject_list' %}">
+                        Subjects
+                    </a>
+                </li>
 
-                    <li>
-                        <a href="{% url 'logout' %}">
-                            Logout
-                        </a>
-                    </li>
+                <li>
+                    <a href="{% url 'assignment_list' %}">
+                        Assignments
+                    </a>
+                </li>
 
-                </ul>
+                <li>
+                    <a href="{% url 'aptitude_dashboard' %}">
+                        Aptitude
+                    </a>
+                </li>
 
-            </details>
+                <li>
+                    <a href="{% url 'logout' %}">
+                        Logout
+                    </a>
+                </li>
+
+            </ul>
 
         </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
+
     <main class="main-content">
         <div class="container">
 
@@ -445,7 +444,7 @@
                 {% endfor %}
             {% endif %}
 
-            <!-- Individual Page Content -->
+            <!-- Individual page content -->
             {% block content %}
             {% endblock %}
 
