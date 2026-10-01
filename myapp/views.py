@@ -993,99 +993,54 @@ class QusetionAPIView(APIView):
 # FRONTEND: APTITUDE DASHBOARD
 
 
+from .models import AptitudeCategory
+
 def aptitude_dashboard(request):
-    try:
-        response = requests.get(
-            "http://127.0.0.1:8000/api/aptitude/category/",
-            timeout=5
-        )
+    categories = AptitudeCategory.objects.all()
 
-        categories = (
-            response.json()
-            if response.status_code == 200
-            else []
-        )
-
-    except requests.RequestException:
-        categories = []
+    print("Aptitude categories:", categories.count())
 
     return render(
         request,
         "aptitude_dashboard.html",
-        {"categories": categories}
+        {
+            "categories": categories
+        }
     )
-
-
-
 # FRONTEND: APTITUDE QUESTIONS AND RESULT
 
 
+
+
+# APTITUDE QUESTIONS AND RESULT
 def aptitude_questions(request, category_id):
-    try:
-        category_response = requests.get(
-            "http://127.0.0.1:8000/api/aptitude/category/",
-            timeout=5
-        )
 
-        question_response = requests.get(
-            "http://127.0.0.1:8000/api/aptitude/question/",
-            params={"category": category_id},
-            timeout=5
-        )
-
-        category_response.raise_for_status()
-        question_response.raise_for_status()
-
-        categories = category_response.json()
-        questions = question_response.json()
-
-    except requests.RequestException:
-        return render(
-            request,
-            "aptitude_questions.html",
-            {
-                "category": {"category_name": "Aptitude"},
-                "questions": [],
-                "error": "Unable to load questions. Check the API."
-            }
-        )
-
-    category = next(
-        (
-            item for item in categories
-            if str(item.get("id")) == str(category_id)
-        ),
-        None
+    category = get_object_or_404(
+        AptitudeCategory,
+        id=category_id
     )
 
-    if category is None:
-        return render(
-            request,
-            "aptitude_questions.html",
-            {
-                "category": {"category_name": "Category not found"},
-                "questions": [],
-                "error": "This category does not exist."
-            }
-        )
+    questions = Question.objects.filter(
+        category=category
+    )
 
     if request.method == "POST":
+
         score = 0
+        total = questions.count()
 
         for question in questions:
+
             selected_answer = request.POST.get(
-                f"answer_{question['id']}", ""
-            ).strip()
+                f"answer_{question.id}",
+                ""
+            ).strip().upper()
 
             correct_answer = str(
-                question.get("correct_answer", "")
-            ).strip()
+                question.correct_answer
+            ).strip().upper()
 
-            if (
-                selected_answer
-                and selected_answer.casefold()
-                == correct_answer.casefold()
-            ):
+            if selected_answer == correct_answer:
                 score += 1
 
         return render(
@@ -1094,7 +1049,7 @@ def aptitude_questions(request, category_id):
             {
                 "category": category,
                 "score": score,
-                "total": len(questions)
+                "total": total
             }
         )
 

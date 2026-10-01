@@ -1,242 +1,13 @@
+<!-- Aptitude Categories -->
+<div class="aptitude-grid">
 
-{% extends 'base.html' %}
-
-{% block title %}Aptitude Practice | Smart Assignment Tracker{% endblock %}
-
-{% block content %}
-
-<style>
-    .aptitude-dashboard {
-        padding: 20px 12px;
-    }
-
-    /* Page Header */
-    .aptitude-header {
-        padding: 30px;
-        margin-bottom: 28px;
-        border-radius: 18px;
-        background: linear-gradient(
-            135deg,
-            #1e1b4b,
-            #312e81,
-            #4c1d95
-        );
-        box-shadow: 0 10px 30px rgba(30, 27, 75, 0.18);
-    }
-
-    .page-title {
-        color: #ffffff;
-        font-size: 32px;
-        font-weight: 800;
-        margin-bottom: 12px;
-    }
-
-    .page-description {
-        color: #ddd6fe;
-        font-size: 15px;
-        line-height: 1.8;
-        max-width: 700px;
-        margin-bottom: 0;
-    }
-
-    .header-label {
-        display: inline-block;
-        padding: 6px 12px;
-        margin-bottom: 15px;
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.10);
-        color: #ffffff;
-        font-size: 12px;
-        font-weight: 700;
-    }
-
-    /* Category Grid */
-    .aptitude-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 24px;
-        margin-top: 25px;
-    }
-
-    /* Category Card */
-    .aptitude-card {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 26px;
-        background: #ffffff;
-        border: 1px solid #e6e0f5;
-        border-radius: 16px;
-        box-shadow: 0 5px 18px rgba(53, 33, 109, 0.08);
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .aptitude-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(53, 33, 109, 0.15);
-    }
-
-    .aptitude-icon {
-        width: 58px;
-        height: 58px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: #eee8ff;
-        color: #5035a5;
-        border: 1px solid #e0d5ff;
-        border-radius: 15px;
-        font-size: 27px;
-        font-weight: 800;
-    }
-
-    .aptitude-card h3 {
-        color: #35216d;
-        font-size: 20px;
-        font-weight: 700;
-        line-height: 1.5;
-        margin: 18px 0 12px;
-        overflow-wrap: anywhere;
-    }
-
-    .aptitude-card p {
-        flex-grow: 1;
-        color: #625d72;
-        font-size: 14px;
-        line-height: 1.9;
-        margin-bottom: 20px;
-    }
-
-    .category-label {
-        display: inline-block;
-        padding: 5px 10px;
-        margin-bottom: 8px;
-        border-radius: 20px;
-        background: #f5f0ff;
-        color: #6d28d9;
-        font-size: 11px;
-        font-weight: 700;
-    }
-
-    /* Start Practice Button */
-    .aptitude-btn {
-        display: inline-block;
-        width: 100%;
-        padding: 12px 18px;
-        border: 1px solid #5035a5;
-        border-radius: 9px;
-        background: #5035a5;
-        color: #ffffff;
-        text-align: center;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 700;
-        transition: 0.2s ease;
-    }
-
-    .aptitude-btn:hover {
-        background: #35216d;
-        border-color: #35216d;
-        color: #ffffff;
-        transform: translateY(-2px);
-    }
-
-    /* Empty State */
-    .empty-state {
-        grid-column: 1 / -1;
-        padding: 35px 20px;
-        background: #ffffff;
-        border: 1px dashed #c4b5fd;
-        border-radius: 16px;
-        text-align: center;
-    }
-
-    .empty-state h3 {
-        color: #35216d;
-        font-size: 21px;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-
-    .empty-state p {
-        color: #625d72;
-        font-size: 14px;
-        line-height: 1.8;
-        margin-bottom: 0;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 991px) {
-        .aptitude-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-        }
-    }
-
-    @media (max-width: 575px) {
-        .aptitude-dashboard {
-            padding: 12px 4px;
-        }
-
-        .aptitude-header {
-            padding: 24px 20px;
-            border-radius: 15px;
-        }
-
-        .page-title {
-            font-size: 26px;
-        }
-
-        .page-description {
-            font-size: 14px;
-        }
-
-        .aptitude-grid {
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-
-        .aptitude-card {
-            padding: 22px;
-        }
-
-        .aptitude-card h3 {
-            font-size: 19px;
-        }
-    }
-</style>
-
-<div class="container aptitude-dashboard">
-
-    <!-- Page Header -->
-    <div class="aptitude-header">
-
-        <span class="header-label">
-             IT Placement Preparation
-        </span>
-
-        <h1 class="page-title">
-            Aptitude Practice
-        </h1>
-
-        <p class="page-description">
-            Improve your problem-solving skills and prepare for IT placements.
-            Select a category below to begin your practice.
-        </p>
-
-    </div>
-
-    <!-- Aptitude Categories -->
-    <div class="aptitude-grid">
+    {% if categories %}
 
         {% for category in categories %}
 
             <div class="aptitude-card">
 
-                <!-- Category Icon -->
                 <div class="aptitude-icon">
-
                     {% if category.category_name == "Quantitative Aptitude" %}
                         %
                     {% elif category.category_name == "Logical Reasoning" %}
@@ -246,77 +17,54 @@
                     {% else %}
                         A
                     {% endif %}
-
                 </div>
 
-               
+                <h3>{{ category.category_name }}</h3>
 
-                <!-- Category Name -->
-                <h3>
-                    {{ category.category_name }}
-                </h3>
-
-                <!-- Category Description -->
                 {% if category.category_name == "Quantitative Aptitude" %}
-
                     <p>
                         Practise percentages, profit and loss,
                         simple interest, ratios, and time and work.
                         Build your calculation skills for placement tests.
                     </p>
-
                 {% elif category.category_name == "Logical Reasoning" %}
-
                     <p>
-                        Improve number series, coding-decoding,
+                        Practise number series, coding-decoding,
                         directions, and logical thinking.
-                        Develop your problem-solving ability.
                     </p>
-
                 {% elif category.category_name == "Verbal Ability" %}
-
                     <p>
                         Practise synonyms, antonyms, grammar,
-                        and sentence correction to improve your
-                        English and verbal reasoning skills.
+                        and sentence correction.
                     </p>
-
                 {% else %}
-
                     <p>
                         Practise questions and improve your
                         aptitude and placement preparation skills.
                     </p>
-
                 {% endif %}
 
-                <!-- Start Practice -->
                 <a
                     class="btn aptitude-btn"
                     href="{% url 'aptitude_questions' category.id %}"
                 >
-                    Start Practice 
+                    Start Practice
                 </a>
 
             </div>
 
-        {% empty %}
-
-            <div class="empty-state">
-                <h3>No Categories Available</h3>
-
-                <p>
-                    No aptitude categories are available yet.
-                    Add aptitude categories through your existing API
-                    or database to display them here.
-                </p>
-            </div>
-
         {% endfor %}
 
-    </div>
+    {% else %}
+
+        <div class="empty-state">
+            <h3>No Categories Available</h3>
+            <p>
+                No categories were found in the application's database.
+                Please check your deployed database.
+            </p>
+        </div>
+
+    {% endif %}
 
 </div>
-
-{% endblock %}
-
