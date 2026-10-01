@@ -715,12 +715,18 @@ def subject_list(request):
 # FRONTEND: ADD SUBJECT
 
 
+from django.shortcuts import render, redirect
+from .models import Subject
+
+
 def add_subject(request):
     if request.method == "GET":
         return render(request, "subject_form.html")
 
     if request.method == "POST":
-        subject_name = request.POST.get("subject_name", "").strip()
+        subject_name = request.POST.get(
+            "subject_name", ""
+        ).strip()
 
         if not subject_name:
             return render(
@@ -729,32 +735,24 @@ def add_subject(request):
                 {"error": "Please enter a subject name."}
             )
 
+        if len(subject_name) > 30:
+            return render(
+                request,
+                "subject_form.html",
+                {"error": "Subject name must be within 30 characters."}
+            )
+
         try:
-            response = requests.post(
-                "https://smart-student-academic-aptitude-tracker.onrender.com/api/subject/",
-                json={"subject_name": subject_name},
-                timeout=30
-            )
+            Subject.objects.create(name=subject_name)
 
-            if response.status_code == 201:
-                return redirect("subject_list")
+            return redirect("subject_list")
 
+        except Exception as e:
             return render(
                 request,
                 "subject_form.html",
-                {"error": response.text}
+                {"error": f"Unable to save subject: {e}"}
             )
-
-        except requests.RequestException as e:
-            return render(
-                request,
-                "subject_form.html",
-                {"error": f"API connection failed: {e}"}
-            )
-
-
-
-
 
 
 def edit_subject(request, id):
