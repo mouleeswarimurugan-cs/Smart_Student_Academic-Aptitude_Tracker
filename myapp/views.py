@@ -9,24 +9,17 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_list_or_404
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import Subject, Assignment, AptitudeCategory, Question
-from .serializers import (
-    SubjectSerializer,
-    AssignmentSerializer,
-    AptitudeCategorySerializer,
-    QuestionSerializer,
-)
+from .models import *
+from .serializers import *
+    
 
 
-# =====================================================
-# API: SUBJECT
-# =====================================================
 
 class SubjectAPIView(APIView):
 
@@ -107,10 +100,6 @@ class SubjectviewById(APIView):
             status=status.HTTP_200_OK
         )
 
-
-# =====================================================
-# API: ASSIGNMENT
-# =====================================================
 
 class AssignmentAPIView(APIView):
 
@@ -257,17 +246,10 @@ class AssignmentViewById(APIView):
         )
 
 
-# =====================================================
-# FRONTEND: HOME
-# =====================================================
-
 def home(request):
     return render(request, "home.html")
 
 
-# =====================================================
-# FRONTEND: REGISTER / LOGIN / LOGOUT
-# =====================================================
 
 def register(request):
     if request.method == "POST":
@@ -338,9 +320,6 @@ def logout_view(request):
     return redirect("login")
 
 
-# =====================================================
-# FRONTEND: DASHBOARD
-# =====================================================
 
 @login_required(login_url="login")
 def dashboard(request):
@@ -405,9 +384,6 @@ def dashboard(request):
     return render(request, "dashboard.html", context)
 
 
-# =====================================================
-# FRONTEND: ASSIGNMENT LIST
-# =====================================================
 
 import requests
 from django.shortcuts import render
@@ -472,9 +448,6 @@ def assignment_list(request):
         }
     )
 
-# =====================================================
-# FRONTEND: ADD ASSIGNMENT
-# =====================================================
 
 def add_assignment(request):
     if request.method == "GET":
@@ -552,9 +525,6 @@ def add_assignment(request):
         )
 
 
-# =====================================================
-# FRONTEND: EDIT ASSIGNMENT
-# =====================================================
 
 def edit_assignment(request, id):
     api_url = f"http://127.0.0.1:8000/api/assignment/{id}/"
@@ -667,9 +637,6 @@ def edit_assignment(request, id):
         )
 
 
-# =====================================================
-# FRONTEND: DELETE ASSIGNMENT
-# =====================================================
 
 def delete_assignment(request, id):
     api_url = f"http://127.0.0.1:8000/api/assignment/{id}/"
@@ -718,9 +685,6 @@ def delete_assignment(request, id):
         )
 
 
-# =====================================================
-# FRONTEND: SUBJECT LIST
-# =====================================================
 
 import requests
 from django.shortcuts import render
@@ -767,9 +731,9 @@ def add_subject(request):
 
         try:
             response = requests.post(
-                "http://127.0.0.1:8000/api/subject/",
+                "https://smart-student-academic-aptitude-tracker.onrender.com/api/subject/",
                 json={"subject_name": subject_name},
-                timeout=5
+                timeout=30
             )
 
             if response.status_code == 201:
@@ -790,8 +754,6 @@ def add_subject(request):
 
 
 
-
-# FRONTEND: EDIT SUBJECT
 
 
 
@@ -863,7 +825,6 @@ def edit_subject(request, id):
                 status=503
             )
         
-# FRONTEND: DELETE SUBJECT
 
 
 def delete_subject(request, id):
@@ -914,7 +875,7 @@ def delete_subject(request, id):
 
 
 
-# API: APTITUDE CATEGORY
+
 
 
 class AptitudeCategoryAPIView(APIView):
@@ -951,7 +912,7 @@ class AptitudeCategoryAPIView(APIView):
 
 
 
-# API: APTITUDE QUESTIONS
+
 
 
 class QusetionAPIView(APIView):
@@ -990,7 +951,6 @@ class QusetionAPIView(APIView):
         )
 
 
-# FRONTEND: APTITUDE DASHBOARD
 
 
 from .models import AptitudeCategory
@@ -1007,11 +967,10 @@ def aptitude_dashboard(request):
             "categories": categories
         }
     )
-# FRONTEND: APTITUDE QUESTIONS AND RESULT
 
 
 
-
+from django.shortcuts import get_object_or_404
 # APTITUDE QUESTIONS AND RESULT
 def aptitude_questions(request, category_id):
 
