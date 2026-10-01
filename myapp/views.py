@@ -385,7 +385,6 @@ def dashboard(request):
 
 
 
-import requests
 from django.shortcuts import render
 
 def assignment_list(request):
