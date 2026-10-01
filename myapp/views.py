@@ -719,10 +719,20 @@ def subject_list(request):
     )
 
 
+    import requests
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
+
 def add_subject(request):
 
-    api_url = "https://smart-student-academic-aptitude-tracker.onrender.com/api/subject/"
+    api_url = (
+        "https://smart-student-academic-aptitude-tracker"
+        ".onrender.com/api/subject/"
+    )
 
+    
     if request.method == "GET":
         return render(request, "subject_form.html")
 
@@ -741,12 +751,21 @@ def add_subject(request):
     try:
         response = requests.post(
             api_url,
-            json={"subject_name": subject_name},
+            json={
+                "subject_name": subject_name
+            },
             timeout=60
         )
 
+        print("API URL:", api_url)
+        print("POST Status:", response.status_code)
+        print("POST Response:", response.text)
+
         if response.status_code in (200, 201):
-            messages.success(request, "Subject added successfully!")
+            messages.success(
+                request,
+                "Subject added successfully!"
+            )
             return redirect("subject_list")
 
         return render(request, "subject_form.html", {
@@ -757,9 +776,11 @@ def add_subject(request):
         })
 
     except requests.RequestException as e:
+        print("API Error:", str(e))
+
         return render(request, "subject_form.html", {
             "error": f"API connection failed: {e}"
-        })
+        })    
 
     
 def edit_subject(request, id):
