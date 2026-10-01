@@ -720,6 +720,7 @@ def subject_list(request):
 
 
 def add_subject(request):
+    api_url = "https://YOUR-RENDER-APP.onrender.com/api/subject/"
     if request.method == "GET":
         return render(request, "subject_form.html")
 
