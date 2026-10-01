@@ -409,6 +409,9 @@ def dashboard(request):
 # FRONTEND: ASSIGNMENT LIST
 # =====================================================
 
+import requests
+from django.shortcuts import render
+
 def assignment_list(request):
     search = request.GET.get("search", "")
     priority = request.GET.get("priority", "")
@@ -429,32 +432,31 @@ def assignment_list(request):
     if subject:
         params["subject"] = subject
 
+    # Replace this with your actual Render URL
+    API_BASE_URL = "https://YOUR-RENDER-URL.onrender.com"
+
     try:
         response = requests.get(
-            "http://127.0.0.1:8000/api/assignment/",
+            f"{API_BASE_URL}/api/assignment/",
             params=params,
-            timeout=5
+            timeout=20
         )
-
         response.raise_for_status()
         assignments = response.json()
 
         subject_response = requests.get(
-            "http://127.0.0.1:8000/api/subject/",
-            timeout=5
+            f"{API_BASE_URL}/api/subject/",
+            timeout=20
         )
+        subject_response.raise_for_status()
+        subjects = subject_response.json()
 
-        subjects = (
-            subject_response.json()
-            if subject_response.status_code == 200
-            else []
-        )
-
-    except requests.RequestException as e:
-        return HttpResponse(
-            f"Unable to load assignments: {e}",
-            status=503
-        )
+    except requests.RequestException:
+        assignments = []
+        subjects = []
+        error = "Unable to load assignments. Please try again."
+    else:
+        error = None
 
     return render(
         request,
@@ -466,9 +468,9 @@ def assignment_list(request):
             "selected_priority": priority,
             "selected_status": status_value,
             "selected_subject": subject,
+            "error": error,
         }
     )
-
 
 # =====================================================
 # FRONTEND: ADD ASSIGNMENT
@@ -720,33 +722,30 @@ def delete_assignment(request, id):
 # FRONTEND: SUBJECT LIST
 # =====================================================
 
+import requests
+from django.shortcuts import render
+
 def subject_list(request):
+    api_url = "https://your-project-name.onrender.com/api/subject/"
+
     try:
-        response = requests.get(
-            "http://127.0.0.1:8000/api/subject/",
-            timeout=5
-        )
-
-        if response.status_code != 200:
-            return HttpResponse(
-                f"Unable to load subjects: {response.text}",
-                status=response.status_code
-            )
-
+        response = requests.get(api_url, timeout=20)
+        response.raise_for_status()
         subjects = response.json()
+        error = None
 
-    except requests.RequestException as e:
-        return HttpResponse(
-            f"API connection failed: {e}",
-            status=503
-        )
+    except requests.RequestException:
+        subjects = []
+        error = "Unable to load subjects. Please try again."
 
     return render(
         request,
         "subject_list.html",
-        {"subjects": subjects}
+        {
+            "subjects": subjects,
+            "error": error,
+        }
     )
-
 
 
 # FRONTEND: ADD SUBJECT
