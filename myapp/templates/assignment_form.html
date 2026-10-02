@@ -254,7 +254,7 @@ Add Assignment - Smart Assignment Tracker
 
                         {% for subject in subjects %}
                             <option value="{{ subject.id }}">
-                                {{ subject.name|default:subject.subject_name }}
+                                {{ subject.subject_name }}
                             </option>
                         {% endfor %}
                     </select>
