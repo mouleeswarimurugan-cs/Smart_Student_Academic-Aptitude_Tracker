@@ -704,61 +704,46 @@ def subject_list(request):
 
 def add_subject(request):
 
-    api_url = (
-        "https://smart-student-academic-aptitude-tracker"
-        ".onrender.com/api/subject/"
-    )
-
-    
     if request.method == "GET":
-        return render(request, "subject_form.html")
-
-    subject_name = request.POST.get("subject_name", "").strip()
-
-    if not subject_name:
-        return render(request, "subject_form.html", {
-            "error": "Please enter a subject name."
-        })
-
-    if len(subject_name) > 30:
-        return render(request, "subject_form.html", {
-            "error": "Subject name must be within 30 characters."
-        })
-
-    try:
-        response = requests.post(
-            api_url,
-            json={
-                "subject_name": subject_name
-            },
-            timeout=60
+        return render(
+            request,
+            "subject_form.html"
         )
 
-        print("API URL:", api_url)
-        print("POST Status:", response.status_code)
-        print("POST Response:", response.text)
+    subject_name = request.POST.get(
+        "subject_name",
+        ""
+    ).strip()
 
-        if response.status_code in (200, 201):
-            messages.success(
-                request,
-                "Subject added successfully!"
-            )
-            return redirect("subject_list")
+    if not subject_name:
+        return render(
+            request,
+            "subject_form.html",
+            {
+                "error": "Please enter a subject name."
+            }
+        )
 
-        return render(request, "subject_form.html", {
-            "error": (
-                f"Unable to save subject: "
-                f"HTTP {response.status_code} - {response.text}"
-            )
-        })
+    if len(subject_name) > 30:
+        return render(
+            request,
+            "subject_form.html",
+            {
+                "error": "Subject name must be within 30 characters."
+            }
+        )
 
-    except requests.RequestException as e:
-        print("API Error:", str(e))
+    # Save directly to database
+    Subject.objects.create(
+        subject_name=subject_name
+    )
 
-        return render(request, "subject_form.html", {
-            "error": f"API connection failed: {e}"
-        })    
+    messages.success(
+        request,
+        "Subject added successfully!"
+    )
 
+    return redirect("subject_list")
     
 def edit_subject(request, id):
 
