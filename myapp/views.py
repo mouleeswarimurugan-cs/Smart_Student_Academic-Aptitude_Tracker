@@ -449,10 +449,9 @@ def assignment_list(request):
 
 def add_assignment(request):
 
-    # GET - Show Add Assignment form
-    if request.method == "GET":
+    subjects = Subject.objects.all()
 
-        subjects = Subject.objects.all()
+    if request.method == "GET":
 
         return render(
             request,
@@ -462,60 +461,50 @@ def add_assignment(request):
             }
         )
 
-    # POST - Save Assignment
     if request.method == "POST":
 
-        data = {
-            "title": request.POST.get("title", "").strip(),
-            "subject": request.POST.get("subject"),
-            "description": request.POST.get("description", "").strip(),
-            "due_date": request.POST.get("due_date"),
-            "priority": request.POST.get("priority"),
-            "status": request.POST.get("status"),
-            "name": request.POST.get("name", "").strip(),
-        }
-
-        files = {}
+        title = request.POST.get("title", "").strip()
+        subject_id = request.POST.get("subject")
+        description = request.POST.get("description", "").strip()
+        due_date = request.POST.get("due_date")
+        priority = request.POST.get("priority")
+        status = request.POST.get("status")
+        name = request.POST.get("name", "").strip()
 
         attachment = request.FILES.get("attachment")
 
-        if attachment:
-            files["attachment"] = (
-                attachment.name,
-                attachment.file,
-                attachment.content_type
-            )
-
         try:
-            response = requests.post(
-                "http://127.0.0.1:8000/api/assignment/",
-                data=data,
-                files=files,
-                timeout=10
+            subject = Subject.objects.get(id=subject_id)
+
+        except Subject.DoesNotExist:
+
+            return render(
+                request,
+                "assignment_form.html",
+                {
+                    "subjects": subjects,
+                    "error": "Please select a valid subject."
+                }
             )
 
-        except requests.RequestException as e:
-            return HttpResponse(
-                f"API connection failed: {e}",
-                status=503
-            )
-
-        if response.status_code == 201:
-            return redirect("assignment_list")
-
-        # If API returns an error
-        subjects = Subject.objects.all()
-
-        return render(
-            request,
-            "assignment_form.html",
-            {
-                "subjects": subjects,
-                "error": response.text,
-            }
+        Assignment.objects.create(
+            title=title,
+            subject=subject,
+            description=description,
+            due_date=due_date,
+            priority=priority,
+            status=status,
+            name=name,
+            attachment=attachment
         )
 
+        messages.success(
+            request,
+            "Assignment added successfully!"
 
+        )
+
+        return redirect("assignment_list")
 
 def edit_assignment(request, id):
     api_url = f"http://127.0.0.1:8000/api/assignment/{id}/"
