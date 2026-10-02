@@ -690,42 +690,16 @@ from django.shortcuts import render
 
 def subject_list(request):
 
-    api_url = (
-        "https://smart-student-academic-aptitude-tracker"
-        ".onrender.com/api/subject/"
-    )
-
-    try:
-        response = requests.get(api_url, timeout=60)
-        response.raise_for_status()
-
-        data = response.json()
-
-        if isinstance(data, dict) and "results" in data:
-            subjects = data["results"]
-        else:
-            subjects = data
-
-        error = None
-
-    except requests.RequestException as e:
-        subjects = []
-        error = f"Unable to load subjects: {e}"
-
-    except ValueError:
-        subjects = []
-        error = "Invalid response received from Subject API."
+    subjects = Subject.objects.all()
 
     return render(
         request,
         "subject_list.html",
         {
             "subjects": subjects,
-            "error": error,
+            "error": None,
         }
     )
-
-
 
 
 def add_subject(request):
