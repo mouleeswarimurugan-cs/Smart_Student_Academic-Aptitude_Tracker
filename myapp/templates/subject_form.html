@@ -14,70 +14,55 @@ Add Subject - Smart Student Academic & Aptitude Tracker
 >
 
 <style>
-    
     :root {
-        --primary-dark: #211b5b;
+        --primary-dark:  #1e1b4b;
         --primary: #312e81;
-        --primary-light: #54239a;
+        --primary-light: #4c1d95;
         --purple: #6d28d9;
         --page-bg: #f7f5fc;
         --text-color: #211d38;
     }
 
-    /* MAIN PAGE */
     .subject-form-page {
-        max-width: 950px;
+        max-width: 720px;
         margin: 45px auto;
         padding: 0 12px;
         color: var(--text-color);
     }
 
-    /* HEADER */
+
     .form-header {
         position: relative;
         overflow: hidden;
-
         padding: 28px 30px;
-        margin-bottom: 26px;
-
+        margin-bottom: 24px;
         border-radius: 18px;
-
         background: linear-gradient(
             135deg,
             var(--primary-dark),
             var(--primary),
             var(--primary-light)
         );
-
         box-shadow: 0 10px 30px rgba(30, 27, 75, 0.18);
     }
 
     .form-header::after {
         content: "";
-
         position: absolute;
-
         width: 150px;
         height: 150px;
-
-        right: -30px;
+        right: -55px;
         top: -65px;
-
         border-radius: 50%;
-
         background: rgba(255, 255, 255, 0.08);
-
         pointer-events: none;
     }
 
     .form-header h1 {
         position: relative;
         z-index: 1;
-
         margin: 0;
-
         color: white;
-
         font-size: 28px;
         font-weight: 700;
     }
@@ -85,71 +70,62 @@ Add Subject - Smart Student Academic & Aptitude Tracker
     .form-header p {
         position: relative;
         z-index: 1;
-
         margin: 8px 0 0;
-
         color: #ddd6fe;
-
         font-size: 14px;
         line-height: 1.6;
     }
 
-    /* FORM CARD */
+
     .form-card {
         overflow: hidden;
-
         padding: 32px;
-
         background: white;
-
         border: 1px solid #ebe8f5;
-
         border-radius: 18px;
-
         box-shadow: 0 8px 28px rgba(49, 46, 129, 0.08);
     }
 
-    /* SECTION TITLE */
+    .section-icon {
+        width: 55px;
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        border-radius: 14px;
+        background: #ede9fe;
+        font-size: 25px;
+    }
+
     .form-card h2 {
-        margin: 0;
-
-        padding-bottom: 14px;
-
-        color: #17135c;
-
-        border-bottom: 1px solid #ebe8f5;
-
-        font-size: 16px;
+        margin-bottom: 8px;
+        color: #332e4d;
+        font-size: 21px;
         font-weight: 700;
     }
 
-    /* DESCRIPTION */
     .form-description {
-        display: none;
+        margin-bottom: 25px;
+        color: #77738a;
+        font-size: 14px;
+        line-height: 1.6;
     }
 
-    /* LABEL */
-    .form-label {
-        color: #302c49;
 
+    .form-label {
+        color: #514d68;
         font-size: 14px;
         font-weight: 700;
     }
 
-    /* INPUT */
     .form-control {
         min-height: 46px;
-
         padding: 12px 14px;
-
         color: #302c49;
-
         background: #fafaff;
-
         border: 1px solid #ddd9ed;
-
         border-radius: 9px;
-
         font-size: 14px;
     }
 
@@ -159,126 +135,77 @@ Add Subject - Smart Student Academic & Aptitude Tracker
 
     .form-control:focus {
         background: white;
-
         border-color: #7c3aed;
-
-        box-shadow:
-            0 0 0 3px rgba(124, 58, 237, 0.10);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10);
     }
 
-    /* HELP TEXT */
-    .form-text {
-        color: #77738a;
-        font-size: 13px;
-        margin-top: 7px;
-    }
 
-    /* ERROR */
     .error-message {
         padding: 12px 15px;
-
         margin-bottom: 22px;
-
         color: #dc2626;
-
         background: #fef2f2;
-
         border: 1px solid #fecaca;
-
         border-radius: 9px;
-
         font-size: 14px;
-
         overflow-wrap: anywhere;
     }
 
-    /* BUTTON AREA */
+    /* BUTTONS */
     .form-actions {
         display: flex;
-
         flex-wrap: wrap;
-
         gap: 12px;
-
         padding-top: 22px;
-
         margin-top: 28px;
-
         border-top: 1px solid #eeeaf6;
     }
 
-    /* SAVE BUTTON */
     .save-btn {
         padding: 12px 23px;
-
         color: white;
-
         background: linear-gradient(
             135deg,
             var(--purple),
             var(--primary-light)
         );
-
         border: none;
-
         border-radius: 9px;
-
         font-size: 14px;
-
         font-weight: 700;
-
         transition: 0.25s;
-
-        box-shadow:
-            0 7px 18px rgba(109, 40, 217, 0.18);
+        box-shadow: 0 7px 18px rgba(109, 40, 217, 0.18);
     }
 
     .save-btn:hover {
         color: white;
-
         background: #5b21b6;
-
         transform: translateY(-2px);
-
-        box-shadow:
-            0 10px 24px rgba(109, 40, 217, 0.24);
+        box-shadow: 0 10px 24px rgba(109, 40, 217, 0.24);
     }
 
-    /* CANCEL BUTTON */
     .cancel-btn {
         display: inline-flex;
-
         align-items: center;
         justify-content: center;
-
         padding: 12px 23px;
-
         color: #514d68;
-
         background: #f4f2f9;
-
         border: 1px solid #e9e5f2;
-
         border-radius: 9px;
-
         font-size: 14px;
-
         font-weight: 700;
-
         text-decoration: none;
-
         transition: 0.25s;
     }
 
     .cancel-btn:hover {
         color: var(--primary);
-
         background: #e9e5f2;
     }
 
-    /* MOBILE */
+   
     @media (max-width: 576px) {
-
         .subject-form-page {
             margin: 25px auto;
         }
@@ -304,8 +231,8 @@ Add Subject - Smart Student Academic & Aptitude Tracker
             width: 100%;
         }
     }
-
 </style>
+
 
 <div class="container subject-form-page">
 
@@ -377,4 +304,3 @@ Add Subject - Smart Student Academic & Aptitude Tracker
 </div>
 
 {% endblock %}
-
