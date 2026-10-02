@@ -388,50 +388,40 @@ def dashboard(request):
 from django.shortcuts import render
 
 def assignment_list(request):
+
     search = request.GET.get("search", "")
     priority = request.GET.get("priority", "")
     status_value = request.GET.get("status", "")
     subject = request.GET.get("subject", "")
 
-    params = {}
+    assignments = Assignment.objects.all()
+    subjects = Subject.objects.all()
 
+    # Search
     if search:
-        params["search"] = search
+        assignments = assignments.filter(
+            Q(title__icontains=search) |
+            Q(description__icontains=search) |
+            Q(name__icontains=search)
+        )
 
+    # Priority filter
     if priority:
-        params["priority"] = priority
+        assignments = assignments.filter(
+            priority=priority
+        )
 
+    # Status filter
     if status_value:
-        params["status"] = status_value
+        assignments = assignments.filter(
+            status=status_value
+        )
 
+    # Subject filter
     if subject:
-        params["subject"] = subject
-
-    # Replace this with your actual Render URL
-    API_BASE_URL = "https://YOUR-RENDER-URL.onrender.com"
-
-    try:
-        response = requests.get(
-            f"{API_BASE_URL}/api/assignment/",
-            params=params,
-            timeout=20
+        assignments = assignments.filter(
+            subject_id=subject
         )
-        response.raise_for_status()
-        assignments = response.json()
-
-        subject_response = requests.get(
-            f"{API_BASE_URL}/api/subject/",
-            timeout=20
-        )
-        subject_response.raise_for_status()
-        subjects = subject_response.json()
-
-    except requests.RequestException:
-        assignments = []
-        subjects = []
-        error = "Unable to load assignments. Please try again."
-    else:
-        error = None
 
     return render(
         request,
@@ -443,7 +433,7 @@ def assignment_list(request):
             "selected_priority": priority,
             "selected_status": status_value,
             "selected_subject": subject,
-            "error": error,
+            "error": None,
         }
     )
 
@@ -501,11 +491,11 @@ def add_assignment(request):
         messages.success(
             request,
             "Assignment added successfully!"
-
         )
 
         return redirect("assignment_list")
 
+    
 def edit_assignment(request, id):
     api_url = f"http://127.0.0.1:8000/api/assignment/{id}/"
 
