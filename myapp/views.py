@@ -447,26 +447,24 @@ def assignment_list(request):
         }
     )
 
-
 def add_assignment(request):
-    if request.method == "GET":
-        try:
-            response = requests.get(
-                "http://127.0.0.1:8000/api/subject/",
-                timeout=5
-            )
-            subjects = response.json() if response.status_code == 200 else []
 
-        except requests.RequestException:
-            subjects = []
+    # GET - Show Add Assignment form
+    if request.method == "GET":
+
+        subjects = Subject.objects.all()
 
         return render(
             request,
             "assignment_form.html",
-            {"subjects": subjects}
+            {
+                "subjects": subjects
+            }
         )
 
+    # POST - Save Assignment
     if request.method == "POST":
+
         data = {
             "title": request.POST.get("title", "").strip(),
             "subject": request.POST.get("subject"),
@@ -478,6 +476,7 @@ def add_assignment(request):
         }
 
         files = {}
+
         attachment = request.FILES.get("attachment")
 
         if attachment:
@@ -504,15 +503,8 @@ def add_assignment(request):
         if response.status_code == 201:
             return redirect("assignment_list")
 
-        subject_response = requests.get(
-            "http://127.0.0.1:8000/api/subject/"
-        )
-
-        subjects = (
-            subject_response.json()
-            if subject_response.status_code == 200
-            else []
-        )
+        # If API returns an error
+        subjects = Subject.objects.all()
 
         return render(
             request,
