@@ -761,35 +761,26 @@ def add_subject(request):
 
     
 def edit_subject(request, id):
-    api_url = f"http://127.0.0.1:8000/api/subject/{id}/"
+
+    try:
+        subject = Subject.objects.get(id=id)
+    except Subject.DoesNotExist:
+        return HttpResponse("Subject not found", status=404)
 
     if request.method == "GET":
-        try:
-            response = requests.get(api_url, timeout=5)
-
-            if response.status_code != 200:
-                return HttpResponse(
-                    f"Unable to load subject: {response.text}",
-                    status=response.status_code
-                )
-
-            subject = response.json()
-
-            return render(
-                request,
-                "edit_subject.html",
-                {"subject": subject}
-            )
-
-        except requests.RequestException as e:
-            return HttpResponse(
-                f"API connection failed: {e}",
-                status=503
-            )
+        return render(
+            request,
+            "edit_subject.html",
+            {
+                "subject": subject
+            }
+        )
 
     if request.method == "POST":
+
         subject_name = request.POST.get(
-            "subject_name", ""
+            "subject_name",
+            ""
         ).strip()
 
         if not subject_name:
@@ -797,85 +788,58 @@ def edit_subject(request, id):
                 request,
                 "edit_subject.html",
                 {
-                    "subject": {"subject_name": ""},
+                    "subject": subject,
                     "error": "Subject name is required."
                 }
             )
 
-        try:
-            response = requests.put(
-                api_url,
-                json={"subject_name": subject_name},
-                timeout=5
-            )
-
-            if response.status_code == 200:
-                return redirect("subject_list")
-
+        if len(subject_name) > 30:
             return render(
                 request,
                 "edit_subject.html",
                 {
-                    "subject": {"subject_name": subject_name},
-                    "error": response.text
-                },
-                status=400
+                    "subject": subject,
+                    "error": "Subject name must be within 30 characters."
+                }
             )
 
-        except requests.RequestException as e:
-            return HttpResponse(
-                f"API connection failed: {e}",
-                status=503
-            )
-        
+        subject.subject_name = subject_name
+        subject.save()
+
+        messages.success(
+            request,
+            "Subject updated successfully!"
+        )
+
+        return redirect("subject_list")
 
 
 def delete_subject(request, id):
-    api_url = f"http://127.0.0.1:8000/api/subject/{id}/"
+
+    try:
+        subject = Subject.objects.get(id=id)
+    except Subject.DoesNotExist:
+        return HttpResponse("Subject not found", status=404)
 
     if request.method == "GET":
-        try:
-            response = requests.get(api_url, timeout=5)
-
-            if response.status_code == 404:
-                return HttpResponse("Subject not found", status=404)
-
-            if response.status_code != 200:
-                return HttpResponse(
-                    f"Unable to load subject: {response.text}",
-                    status=response.status_code
-                )
-
-            return render(
-                request,
-                "delete_subject.html",
-                {"subject": response.json()}
-            )
-
-        except requests.RequestException as e:
-            return HttpResponse(
-                f"API connection failed: {e}",
-                status=503
-            )
-
-    if request.method == "POST":
-        try:
-            response = requests.delete(api_url, timeout=5)
-
-        except requests.RequestException as e:
-            return HttpResponse(
-                f"API connection failed: {e}",
-                status=503
-            )
-
-        if response.status_code in (200, 204):
-            return redirect("subject_list")
-
-        return HttpResponse(
-            f"Delete failed: {response.text}",
-            status=response.status_code
+        return render(
+            request,
+            "delete_subject.html",
+            {
+                "subject": subject
+            }
         )
 
+    if request.method == "POST":
+
+        subject.delete()
+
+        messages.success(
+            request,
+            "Subject deleted successfully!"
+        )
+
+        return redirect("subject_list")
 
 
 
