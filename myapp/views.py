@@ -1,11 +1,10 @@
-
 from datetime import date
 
 import requests
 
 from django.contrib import messages
 from django.http import HttpResponse
-from django.shortcuts import render, redirect,get_list_or_404
+from django.shortcuts import render, redirect, get_list_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -17,7 +16,6 @@ from rest_framework import status
 
 from .models import *
 from .serializers import *
-    
 
 
 
@@ -25,14 +23,22 @@ class SubjectAPIView(APIView):
 
     def get(self, request):
         subjects = Subject.objects.all()
-        serializer = SubjectSerializer(subjects, many=True)
+
+        serializer = SubjectSerializer(
+            subjects,
+            many=True
+        )
+
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = SubjectSerializer(data=request.data)
+        serializer = SubjectSerializer(
+            data=request.data
+        )
 
         if serializer.is_valid():
             serializer.save()
+
             return Response(
                 serializer.data,
                 status=status.HTTP_201_CREATED
@@ -47,21 +53,28 @@ class SubjectAPIView(APIView):
 class SubjectviewById(APIView):
 
     def get(self, request, id):
+
         try:
             subject = Subject.objects.get(id=id)
+
         except Subject.DoesNotExist:
+
             return Response(
                 {"error": "Subject not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
         serializer = SubjectSerializer(subject)
+
         return Response(serializer.data)
 
     def put(self, request, id):
+
         try:
             subject = Subject.objects.get(id=id)
+
         except Subject.DoesNotExist:
+
             return Response(
                 {"error": "Subject not found"},
                 status=status.HTTP_404_NOT_FOUND
@@ -73,7 +86,9 @@ class SubjectviewById(APIView):
         )
 
         if serializer.is_valid():
+
             serializer.save()
+
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK
@@ -85,9 +100,12 @@ class SubjectviewById(APIView):
         )
 
     def delete(self, request, id):
+
         try:
             subject = Subject.objects.get(id=id)
+
         except Subject.DoesNotExist:
+
             return Response(
                 {"error": "Subject not found"},
                 status=status.HTTP_404_NOT_FOUND
@@ -101,9 +119,11 @@ class SubjectviewById(APIView):
         )
 
 
+
 class AssignmentAPIView(APIView):
 
     def get(self, request):
+
         assignments = Assignment.objects.all()
 
         search = request.GET.get("search")
@@ -112,19 +132,29 @@ class AssignmentAPIView(APIView):
         subject = request.GET.get("subject")
 
         if search:
+
             assignments = assignments.filter(
                 Q(title__icontains=search)
                 | Q(description__icontains=search)
             )
 
         if priority:
-            assignments = assignments.filter(priority=priority)
+
+            assignments = assignments.filter(
+                priority=priority
+            )
 
         if status_value:
-            assignments = assignments.filter(status=status_value)
+
+            assignments = assignments.filter(
+                status=status_value
+            )
 
         if subject:
-            assignments = assignments.filter(subject_id=subject)
+
+            assignments = assignments.filter(
+                subject_id=subject
+            )
 
         serializer = AssignmentSerializer(
             assignments,
@@ -135,13 +165,16 @@ class AssignmentAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+
         serializer = AssignmentSerializer(
             data=request.data,
             context={"request": request}
         )
 
         if serializer.is_valid():
+
             serializer.save()
+
             return Response(
                 {
                     "message": "Assignment saved successfully",
@@ -159,9 +192,12 @@ class AssignmentAPIView(APIView):
 class AssignmentViewById(APIView):
 
     def get(self, request, id):
+
         try:
             assignment = Assignment.objects.get(id=id)
+
         except Assignment.DoesNotExist:
+
             return Response(
                 {"error": "Assignment not found"},
                 status=status.HTTP_404_NOT_FOUND
@@ -175,9 +211,12 @@ class AssignmentViewById(APIView):
         return Response(serializer.data)
 
     def put(self, request, id):
+
         try:
             assignment = Assignment.objects.get(id=id)
+
         except Assignment.DoesNotExist:
+
             return Response(
                 {"error": "Assignment not found"},
                 status=status.HTTP_404_NOT_FOUND
@@ -190,7 +229,9 @@ class AssignmentViewById(APIView):
         )
 
         if serializer.is_valid():
+
             serializer.save()
+
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK
@@ -202,9 +243,12 @@ class AssignmentViewById(APIView):
         )
 
     def patch(self, request, id):
+
         try:
             assignment = Assignment.objects.get(id=id)
+
         except Assignment.DoesNotExist:
+
             return Response(
                 {"error": "Assignment not found"},
                 status=status.HTTP_404_NOT_FOUND
@@ -218,7 +262,9 @@ class AssignmentViewById(APIView):
         )
 
         if serializer.is_valid():
+
             serializer.save()
+
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK
@@ -230,9 +276,12 @@ class AssignmentViewById(APIView):
         )
 
     def delete(self, request, id):
+
         try:
             assignment = Assignment.objects.get(id=id)
+
         except Assignment.DoesNotExist:
+
             return Response(
                 {"error": "Assignment not found"},
                 status=status.HTTP_404_NOT_FOUND
@@ -246,37 +295,72 @@ class AssignmentViewById(APIView):
         )
 
 
-def home(request):
-    return render(request, "home.html")
 
+def home(request):
+
+    return render(
+        request,
+        "home.html"
+    )
 
 
 def register(request):
+
     if request.method == "POST":
-        username = request.POST.get("username", "").strip()
-        email = request.POST.get("email", "").strip()
-        password = request.POST.get("password", "")
-        confirm_password = request.POST.get("confirm_password", "")
+
+        username = request.POST.get(
+            "username",
+            ""
+        ).strip()
+
+        email = request.POST.get(
+            "email",
+            ""
+        ).strip()
+
+        password = request.POST.get(
+            "password",
+            ""
+        )
+
+        confirm_password = request.POST.get(
+            "confirm_password",
+            ""
+        )
 
         if not username or not password:
+
             return render(
                 request,
                 "register.html",
-                {"error": "Username and password are required"}
+                {
+                    "error":
+                    "Username and password are required"
+                }
             )
 
         if password != confirm_password:
+
             return render(
                 request,
                 "register.html",
-                {"error": "Passwords do not match"}
+                {
+                    "error":
+                    "Passwords do not match"
+                }
             )
 
-        if User.objects.filter(username=username).exists():
+        if User.objects.filter(
+            username=username
+        ).exists():
+
             return render(
                 request,
                 "register.html",
-                {"error": "Username already exists"}
+                {
+                    "error":
+                    "Username already exists"
+                }
             )
 
         User.objects.create_user(
@@ -285,16 +369,32 @@ def register(request):
             password=password
         )
 
-        messages.success(request, "Registration successful. Please login.")
+        messages.success(
+            request,
+            "Registration successful. Please login."
+        )
+
         return redirect("login")
 
-    return render(request, "register.html")
+    return render(
+        request,
+        "register.html"
+    )
 
 
 def login(request):
+
     if request.method == "POST":
-        username = request.POST.get("username", "").strip()
-        password = request.POST.get("password", "")
+
+        username = request.POST.get(
+            "username",
+            ""
+        ).strip()
+
+        password = request.POST.get(
+            "password",
+            ""
+        )
 
         user = authenticate(
             request,
@@ -303,28 +403,49 @@ def login(request):
         )
 
         if user is not None:
-            auth_login(request, user)
-            return redirect("dashboard")
+
+            auth_login(
+                request,
+                user
+            )
+
+            return redirect(
+                "dashboard"
+            )
 
         return render(
             request,
             "login.html",
-            {"error": "Invalid username or password"}
+            {
+                "error":
+                "Invalid username or password"
+            }
         )
 
-    return render(request, "login.html")
+    return render(
+        request,
+        "login.html"
+    )
+
+
 
 
 def logout_view(request):
+
     logout(request)
-    return redirect("login")
+
+    return redirect(
+        "login"
+    )
 
 
 
 @login_required(login_url="login")
 def dashboard(request):
 
-    assignments = Assignment.objects.all()
+    assignments = Assignment.objects.filter(
+        user=request.user
+    )
 
     today = date.today()
 
@@ -349,12 +470,24 @@ def dashboard(request):
     ).count()
 
     context = {
-        "total_assignments": total_assignments,
-        "pending_assignments": pending_assignments,
-        "completed_assignments": completed_assignments,
-        "overdue_assignments": overdue_assignments,
-        "high_priority_assignments": high_priority_assignments,
-        "assignments": assignments,
+
+        "total_assignments":
+        total_assignments,
+
+        "pending_assignments":
+        pending_assignments,
+
+        "completed_assignments":
+        completed_assignments,
+
+        "overdue_assignments":
+        overdue_assignments,
+
+        "high_priority_assignments":
+        high_priority_assignments,
+
+        "assignments":
+        assignments,
     }
 
     return render(
@@ -364,212 +497,437 @@ def dashboard(request):
     )
 
 
-from django.shortcuts import render
 
+
+@login_required(login_url="login")
 def assignment_list(request):
 
-    search = request.GET.get("search", "")
-    priority = request.GET.get("priority", "")
-    status_value = request.GET.get("status", "")
-    subject = request.GET.get("subject", "")
+    search = request.GET.get(
+        "search",
+        ""
+    )
 
-    assignments = Assignment.objects.all()
-    subjects = Subject.objects.all()
+    priority = request.GET.get(
+        "priority",
+        ""
+    )
 
-    # Search
+    status_value = request.GET.get(
+        "status",
+        ""
+    )
+
+    subject = request.GET.get(
+        "subject",
+        ""
+    )
+
+    # Only current user's assignments
+    assignments = Assignment.objects.filter(
+        user=request.user
+    )
+
+    # Only current user's subjects
+    subjects = Subject.objects.filter(
+        user=request.user
+    )
+
     if search:
+
         assignments = assignments.filter(
-            Q(title__icontains=search) |
-            Q(description__icontains=search) |
+
+            Q(title__icontains=search)
+            |
+            Q(description__icontains=search)
+            |
             Q(name__icontains=search)
+
         )
 
-    # Priority filter
     if priority:
+
         assignments = assignments.filter(
             priority=priority
         )
 
-    # Status filter
     if status_value:
+
         assignments = assignments.filter(
             status=status_value
         )
 
-    # Subject filter
     if subject:
+
         assignments = assignments.filter(
             subject_id=subject
         )
 
     return render(
+
         request,
+
         "assignment_list.html",
+
         {
-            "assignments": assignments,
-            "subjects": subjects,
-            "search": search,
-            "selected_priority": priority,
-            "selected_status": status_value,
-            "selected_subject": subject,
-            "error": None,
+            "assignments":
+            assignments,
+
+            "subjects":
+            subjects,
+
+            "search":
+            search,
+
+            "selected_priority":
+            priority,
+
+            "selected_status":
+            status_value,
+
+            "selected_subject":
+            subject,
+
+            "error":
+            None,
         }
     )
 
+
+
+@login_required(login_url="login")
 def add_assignment(request):
 
-    subjects = Subject.objects.all()
+    # Current user's subjects only
+    subjects = Subject.objects.filter(
+        user=request.user
+    )
 
     if request.method == "GET":
 
         return render(
+
             request,
+
             "assignment_form.html",
+
             {
-                "subjects": subjects
+                "subjects":
+                subjects
             }
         )
 
     if request.method == "POST":
 
-        title = request.POST.get("title", "").strip()
-        subject_id = request.POST.get("subject")
-        description = request.POST.get("description", "").strip()
-        due_date = request.POST.get("due_date")
-        priority = request.POST.get("priority")
-        status = request.POST.get("status")
-        name = request.POST.get("name", "").strip()
+        title = request.POST.get(
+            "title",
+            ""
+        ).strip()
 
-        attachment = request.FILES.get("attachment")
+        subject_id = request.POST.get(
+            "subject"
+        )
+
+        description = request.POST.get(
+            "description",
+            ""
+        ).strip()
+
+        due_date = request.POST.get(
+            "due_date"
+        )
+
+        priority = request.POST.get(
+            "priority"
+        )
+
+        status = request.POST.get(
+            "status"
+        )
+
+        name = request.POST.get(
+            "name",
+            ""
+        ).strip()
+
+        attachment = request.FILES.get(
+            "attachment"
+        )
 
         try:
-            subject = Subject.objects.get(id=subject_id)
+
+            # Subject must belong to current user
+            subject = Subject.objects.get(
+
+                id=subject_id,
+
+                user=request.user
+
+            )
 
         except Subject.DoesNotExist:
 
             return render(
+
                 request,
+
                 "assignment_form.html",
+
                 {
-                    "subjects": subjects,
-                    "error": "Please select a valid subject."
+                    "subjects":
+                    subjects,
+
+                    "error":
+                    "Please select a valid subject."
                 }
             )
 
+        # Save assignment for current user
         Assignment.objects.create(
+
+            user=request.user,
+
             title=title,
+
             subject=subject,
+
             description=description,
+
             due_date=due_date,
+
             priority=priority,
+
             status=status,
+
             name=name,
+
             attachment=attachment
         )
 
         messages.success(
+
             request,
+
             "Assignment added successfully!"
         )
 
-        return redirect("assignment_list")
+        return redirect(
+            "assignment_list"
+        )
 
-    
+
+
+@login_required(login_url="login")
 def edit_assignment(request, id):
 
     try:
-        assignment = Assignment.objects.get(id=id)
-    except Assignment.DoesNotExist:
-        return HttpResponse("Assignment not found", status=404)
 
-    subjects = Subject.objects.all()
+        assignment = Assignment.objects.get(
+
+            id=id,
+
+            user=request.user
+
+        )
+
+    except Assignment.DoesNotExist:
+
+        return HttpResponse(
+
+            "Assignment not found",
+
+            status=404
+
+        )
+
+    subjects = Subject.objects.filter(
+
+        user=request.user
+
+    )
 
     if request.method == "GET":
 
         return render(
+
             request,
+
             "edit_assignment.html",
+
             {
-                "assignment": assignment,
-                "subjects": subjects,
+
+                "assignment":
+                assignment,
+
+                "subjects":
+                subjects,
+
             }
         )
 
     if request.method == "POST":
 
-        title = request.POST.get("title", "").strip()
-        subject_id = request.POST.get("subject")
-        description = request.POST.get("description", "").strip()
-        due_date = request.POST.get("due_date")
-        priority = request.POST.get("priority")
-        status = request.POST.get("status")
-        name = request.POST.get("name", "").strip()
+        title = request.POST.get(
+            "title",
+            ""
+        ).strip()
 
-        attachment = request.FILES.get("attachment")
+        subject_id = request.POST.get(
+            "subject"
+        )
 
-        # Check subject
+        description = request.POST.get(
+            "description",
+            ""
+        ).strip()
+
+        due_date = request.POST.get(
+            "due_date"
+        )
+
+        priority = request.POST.get(
+            "priority"
+        )
+
+        status = request.POST.get(
+            "status"
+        )
+
+        name = request.POST.get(
+            "name",
+            ""
+        ).strip()
+
+        attachment = request.FILES.get(
+            "attachment"
+        )
+
         if not subject_id:
+
             return render(
+
                 request,
+
                 "edit_assignment.html",
+
                 {
-                    "assignment": assignment,
-                    "subjects": subjects,
-                    "error": "Please select a subject."
+
+                    "assignment":
+                    assignment,
+
+                    "subjects":
+                    subjects,
+
+                    "error":
+                    "Please select a subject."
+
                 }
             )
 
         try:
-            subject = Subject.objects.get(id=int(subject_id))
 
-        except (Subject.DoesNotExist, ValueError):
+            subject = Subject.objects.get(
+
+                id=int(subject_id),
+
+                user=request.user
+
+            )
+
+        except (
+            Subject.DoesNotExist,
+            ValueError
+        ):
+
             return render(
+
                 request,
+
                 "edit_assignment.html",
+
                 {
-                    "assignment": assignment,
-                    "subjects": subjects,
-                    "error": "Please select a valid subject."
+
+                    "assignment":
+                    assignment,
+
+                    "subjects":
+                    subjects,
+
+                    "error":
+                    "Please select a valid subject."
+
                 }
             )
 
-        # Update assignment
         assignment.title = title
+
         assignment.subject = subject
+
         assignment.description = description
+
         assignment.due_date = due_date
+
         assignment.priority = priority
+
         assignment.status = status
+
         assignment.name = name
 
         if attachment:
+
             assignment.attachment = attachment
 
         assignment.save()
 
         messages.success(
+
             request,
+
             "Assignment updated successfully!"
+
         )
 
-        return redirect("assignment_list")
+        return redirect(
+            "assignment_list"
+        )
 
 
+
+@login_required(login_url="login")
 def delete_assignment(request, id):
 
     try:
-        assignment = Assignment.objects.get(id=id)
+
+        assignment = Assignment.objects.get(
+
+            id=id,
+
+            user=request.user
+
+        )
+
     except Assignment.DoesNotExist:
-        return HttpResponse("Assignment not found", status=404)
+
+        return HttpResponse(
+
+            "Assignment not found",
+
+            status=404
+
+        )
 
     if request.method == "GET":
 
         return render(
+
             request,
+
             "assignment_delete.html",
+
             {
-                "assignment": assignment
+                "assignment":
+                assignment
             }
+
         )
 
     if request.method == "POST":
@@ -577,304 +935,510 @@ def delete_assignment(request, id):
         assignment.delete()
 
         messages.success(
+
             request,
+
             "Assignment deleted successfully!"
+
         )
 
-        return redirect("assignment_list")
+        return redirect(
+            "assignment_list"
+        )
 
 
-from django.shortcuts import render
-from django.views.decorators.cache import never_cache
 
-@never_cache
+@login_required(login_url="login")
 def subject_list(request):
 
-    subjects = Subject.objects.all()
+    subjects = Subject.objects.filter(
 
-    response = render(
-        request,
-        "subject_list.html",
-        {
-            "subjects": subjects,
-            "error": None,
-        }
+        user=request.user
+
     )
 
-    return response
+    return render(
+
+        request,
+
+        "subject_list.html",
+
+        {
+
+            "subjects":
+            subjects,
+
+            "error":
+            None,
+
+        }
+
+    )
 
 
+
+@login_required(login_url="login")
 def add_subject(request):
 
     if request.method == "GET":
+
         return render(
+
             request,
+
             "subject_form.html"
+
         )
 
     subject_name = request.POST.get(
+
         "subject_name",
+
         ""
+
     ).strip()
 
     if not subject_name:
+
         return render(
+
             request,
+
             "subject_form.html",
+
             {
-                "error": "Please enter a subject name."
+
+                "error":
+                "Please enter a subject name."
+
             }
+
         )
 
     if len(subject_name) > 30:
+
         return render(
+
             request,
+
             "subject_form.html",
+
             {
-                "error": "Subject name must be within 30 characters."
+
+                "error":
+                "Subject name must be within 30 characters."
+
             }
+
         )
 
-    # Save directly to database
     Subject.objects.create(
+
+        user=request.user,
+
         subject_name=subject_name
+
     )
 
     messages.success(
+
         request,
+
         "Subject added successfully!"
+
     )
 
-    return redirect("subject_list")
-    
+    return redirect(
+        "subject_list"
+    )
+
+
+
+
+@login_required(login_url="login")
 def edit_subject(request, id):
 
     try:
-        subject = Subject.objects.get(id=id)
+
+        subject = Subject.objects.get(
+
+            id=id,
+
+            user=request.user
+
+        )
+
     except Subject.DoesNotExist:
-        return HttpResponse("Subject not found", status=404)
+
+        return HttpResponse(
+
+            "Subject not found",
+
+            status=404
+
+        )
 
     if request.method == "GET":
+
         return render(
+
             request,
+
             "edit_subject.html",
+
             {
-                "subject": subject
+
+                "subject":
+                subject
+
             }
+
         )
 
     if request.method == "POST":
 
         subject_name = request.POST.get(
+
             "subject_name",
+
             ""
+
         ).strip()
 
         if not subject_name:
+
             return render(
+
                 request,
+
                 "edit_subject.html",
+
                 {
-                    "subject": subject,
-                    "error": "Subject name is required."
+
+                    "subject":
+                    subject,
+
+                    "error":
+                    "Subject name is required."
+
                 }
+
             )
 
         if len(subject_name) > 30:
+
             return render(
+
                 request,
+
                 "edit_subject.html",
+
                 {
-                    "subject": subject,
-                    "error": "Subject name must be within 30 characters."
+
+                    "subject":
+                    subject,
+
+                    "error":
+                    "Subject name must be within 30 characters."
+
                 }
+
             )
 
         subject.subject_name = subject_name
+
         subject.save()
 
         messages.success(
+
             request,
+
             "Subject updated successfully!"
+
         )
 
-        return redirect("subject_list")
+        return redirect(
+            "subject_list"
+        )
 
 
+
+@login_required(login_url="login")
 def delete_subject(request, id):
 
     try:
-        subject = Subject.objects.get(id=id)
+
+        subject = Subject.objects.get(
+
+            id=id,
+
+            user=request.user
+
+        )
+
     except Subject.DoesNotExist:
-        return HttpResponse("Subject not found", status=404)
+
+        return HttpResponse(
+
+            "Subject not found",
+
+            status=404
+
+        )
 
     if request.method == "GET":
+
         return render(
+
             request,
+
             "delete_subject.html",
+
             {
-                "subject": subject
+
+                "subject":
+                subject
+
             }
+
         )
 
     if request.method == "POST":
 
         subject.delete()
 
-        # Check whether deletion really happened
-        if Subject.objects.filter(id=id).exists():
-            return HttpResponse(
-                "Subject was not deleted from database.",
-                status=500
-            )
-
         messages.success(
+
             request,
+
             "Subject deleted successfully!"
+
         )
 
-        return redirect("subject_list")
+        return redirect(
+            "subject_list"
+        )
+
 
 
 class AptitudeCategoryAPIView(APIView):
 
     def get(self, request):
+
         categories = AptitudeCategory.objects.all()
 
         serializer = AptitudeCategorySerializer(
+
             categories,
+
             many=True
+
         )
 
-        return Response(serializer.data)
+        return Response(
+            serializer.data
+        )
 
     def post(self, request):
+
         serializer = AptitudeCategorySerializer(
+
             data=request.data
+
         )
 
         if serializer.is_valid():
+
             serializer.save()
+
             return Response(
+
                 {
-                    "message": "Category created successfully",
-                    "data": serializer.data
+
+                    "message":
+                    "Category created successfully",
+
+                    "data":
+                    serializer.data
+
                 },
+
                 status=status.HTTP_201_CREATED
+
             )
 
         return Response(
-            {"error": serializer.errors},
+
+            {
+                "error":
+                serializer.errors
+            },
+
             status=status.HTTP_400_BAD_REQUEST
+
         )
-
-
-
-
 
 
 class QusetionAPIView(APIView):
 
     def get(self, request):
+
         questions = Question.objects.all()
 
         category_id = request.GET.get("category")
 
         if category_id:
-            questions = questions.filter(category_id=category_id)
+            questions = questions.filter(
+            category_id=category_id)
 
-        serializer = QuestionSerializer(
-            questions,
-            many=True
-        )
+        serializer = QuestionSerializer(questions,many=True )
 
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = QuestionSerializer(data=request.data)
+
+        serializer = QuestionSerializer( data=request.data)
 
         if serializer.is_valid():
             serializer.save()
             return Response(
+
                 {
-                    "message": "Question created successfully",
-                    "data": serializer.data
+
+                    "message":
+                    "Question created successfully",
+
+                    "data":
+                    serializer.data
+
                 },
+
                 status=status.HTTP_201_CREATED
+
             )
 
         return Response(
-            {"error": serializer.errors},
+
+            {
+                "error":
+                serializer.errors
+            },
+
             status=status.HTTP_400_BAD_REQUEST
+
         )
-
-
 
 
 from .models import AptitudeCategory
 
+
 def aptitude_dashboard(request):
+
     categories = AptitudeCategory.objects.all()
 
-    print("Aptitude categories:", categories.count())
-
-    return render(
-        request,
-        "aptitude_dashboard.html",
-        {
-            "categories": categories
-        }
+    print(
+        "Aptitude categories:",
+        categories.count()
     )
 
+    return render(
+
+        request,
+
+        "aptitude_dashboard.html",
+
+        {
+
+            "categories":
+            categories
+
+        }
+
+    )
 
 
 from django.shortcuts import get_object_or_404
-# APTITUDE QUESTIONS AND RESULT
+
+
+
+
 def aptitude_questions(request, category_id):
 
     category = get_object_or_404(
+
         AptitudeCategory,
+
         id=category_id
+
     )
 
     questions = Question.objects.filter(
+
         category=category
+
     )
 
     if request.method == "POST":
 
         score = 0
+
         total = questions.count()
 
         for question in questions:
 
             selected_answer = request.POST.get(
+
                 f"answer_{question.id}",
+
                 ""
+
             ).strip().upper()
 
             correct_answer = str(
+
                 question.correct_answer
+
             ).strip().upper()
 
             if selected_answer == correct_answer:
+
                 score += 1
 
         return render(
+
             request,
+
             "aptitude_result.html",
+
             {
-                "category": category,
-                "score": score,
-                "total": total
+
+                "category":
+                category,
+
+                "score":
+                score,
+
+                "total":
+                total
+
             }
+
         )
 
     return render(
+
         request,
+
         "aptitude_questions.html",
+
         {
-            "category": category,
-            "questions": questions
+
+            "category":
+            category,
+
+            "questions":
+            questions
+
         }
+
     )
