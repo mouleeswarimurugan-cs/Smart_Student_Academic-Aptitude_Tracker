@@ -721,15 +721,19 @@ def delete_subject(request, id):
 
         subject.delete()
 
+        # Check whether deletion really happened
+        if Subject.objects.filter(id=id).exists():
+            return HttpResponse(
+                "Subject was not deleted from database.",
+                status=500
+            )
+
         messages.success(
             request,
             "Subject deleted successfully!"
         )
 
         return redirect("subject_list")
-
-
-
 
 
 class AptitudeCategoryAPIView(APIView):
