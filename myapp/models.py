@@ -4,45 +4,78 @@ from django.contrib.auth.models import User
 
 
 class Subject(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,null=True,blank=True)
+
+    subject_name = models.CharField(
+        max_length=30
     )
-    subject_name = models.CharField(max_length=30)
 
     def __str__(self):
         return self.subject_name
 
 
-
-
 class Assignment(models.Model):
 
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,null=True,blank=True)
 
-    priority = [
-        ("Low", "Low"),
-        ("Medium", "Medium"),
-        ("High", "High")
-    ]
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.CASCADE
+    )
 
+    title = models.CharField(
+        max_length=200
+    )
 
-    status = [
-        ("Pending", "Pending"),
-        ("In Progress", "In Progress"),
-        ("Completed", "Completed")
-    ]
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    description = models.TextField(
+        max_length=1000
+    )
 
-    title = models.CharField(max_length=50)
-    subject = models.ForeignKey(Subject,on_delete=models.CASCADE)
-    description = models.TextField(max_length=1000)
     due_date = models.DateField()
-    priority = models.CharField(max_length=10,choices=priority,default='Medium')
-    status = models.CharField(max_length=20,choices=status,default='Pending')
-    attachment = models.FileField( upload_to="assignments/",blank=True,null=True)
-    create_date = models.DateField(auto_now_add=True)
-    name = models.CharField(max_length=30)
+
+    priority = models.CharField(
+        max_length=20,
+        choices=[
+            ("Low", "Low"),
+            ("Medium", "Medium"),
+            ("High", "High"),
+        ],
+        default="Medium"
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("Pending", "Pending"),
+            ("In Progress", "In Progress"),
+            ("Completed", "Completed"),
+        ],
+        default="Pending"
+    )
+
+    attachment = models.FileField(
+        upload_to="assignments/",
+        blank=True,
+        null=True
+    )
+
+    create_date = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    name = models.CharField(
+        max_length=100
+    )
 
     def __str__(self):
         return self.title
+
+
 
 
 class AptitudeCategory(models.Model):
