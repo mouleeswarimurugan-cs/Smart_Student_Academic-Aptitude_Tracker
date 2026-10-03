@@ -323,54 +323,30 @@ def logout_view(request):
 
 @login_required(login_url="login")
 def dashboard(request):
-    try:
-        response = requests.get(
-            "http://127.0.0.1:8000/api/assignment/",
-            timeout=5
-        )
-        response.raise_for_status()
-        assignments = response.json()
 
-    except requests.RequestException:
-        return render(
-            request,
-            "dashboard.html",
-            {
-                "error": "Unable to load assignments. Check the API.",
-                "total_assignments": 0,
-                "pending_assignments": 0,
-                "completed_assignments": 0,
-                "overdue_assignments": 0,
-                "high_priority_assignments": 0,
-                "assignments": [],
-            }
-        )
+    assignments = Assignment.objects.all()
 
     today = date.today()
 
-    total_assignments = len(assignments)
-    pending_assignments = 0
-    completed_assignments = 0
-    overdue_assignments = 0
-    high_priority_assignments = 0
+    total_assignments = assignments.count()
 
-    for assignment in assignments:
-        if assignment.get("status") == "Pending":
-            pending_assignments += 1
+    pending_assignments = assignments.filter(
+        status="Pending"
+    ).count()
 
-        if assignment.get("status") == "Completed":
-            completed_assignments += 1
+    completed_assignments = assignments.filter(
+        status="Completed"
+    ).count()
 
-        if assignment.get("priority") == "High":
-            high_priority_assignments += 1
+    high_priority_assignments = assignments.filter(
+        priority="High"
+    ).count()
 
-        due_date = assignment.get("due_date")
-
-        if due_date:
-            due = date.fromisoformat(due_date)
-
-            if due < today and assignment.get("status") != "Completed":
-                overdue_assignments += 1
+    overdue_assignments = assignments.filter(
+        due_date__lt=today
+    ).exclude(
+        status="Completed"
+    ).count()
 
     context = {
         "total_assignments": total_assignments,
@@ -381,8 +357,11 @@ def dashboard(request):
         "assignments": assignments,
     }
 
-    return render(request, "dashboard.html", context)
-
+    return render(
+        request,
+        "dashboard.html",
+        context
+    )
 
 
 from django.shortcuts import render
@@ -497,164 +476,112 @@ def add_assignment(request):
 
     
 def edit_assignment(request, id):
-    api_url = f"http://127.0.0.1:8000/api/assignment/{id}/"
+
+    try:
+        assignment = Assignment.objects.get(id=id)
+    except Assignment.DoesNotExist:
+        return HttpResponse("Assignment not found", status=404)
+
+    subjects = Subject.objects.all()
 
     if request.method == "GET":
-        try:
-            response = requests.get(api_url, timeout=5)
 
-            if response.status_code == 404:
-                return HttpResponse("Assignment not found", status=404)
+        return render(
+            request,
+            "edit_assignment.html",
+            {
+                "assignment": assignment,
+                "subjects": subjects,
+            }
+        )
 
-            if response.status_code != 200:
-                return HttpResponse(
-                    f"Unable to load assignment: {response.text}",
-                    status=response.status_code
-                )
+    if request.method == "POST":
 
-            assignment = response.json()
+        title = request.POST.get("title", "").strip()
+        subject_id = request.POST.get("subject")
+        description = request.POST.get("description", "").strip()
+        due_date = request.POST.get("due_date")
+        priority = request.POST.get("priority")
+        status = request.POST.get("status")
+        name = request.POST.get("name", "").strip()
 
-            subject_response = requests.get(
-                "http://127.0.0.1:8000/api/subject/",
-                timeout=5
-            )
+        attachment = request.FILES.get("attachment")
 
-            subjects = (
-                subject_response.json()
-                if subject_response.status_code == 200
-                else []
-            )
-
+        # Check subject
+        if not subject_id:
             return render(
                 request,
                 "edit_assignment.html",
                 {
                     "assignment": assignment,
                     "subjects": subjects,
+                    "error": "Please select a subject."
                 }
             )
 
-        except requests.RequestException as e:
-            return HttpResponse(
-                f"API connection failed: {e}",
-                status=503
+        try:
+            subject = Subject.objects.get(id=int(subject_id))
+
+        except (Subject.DoesNotExist, ValueError):
+            return render(
+                request,
+                "edit_assignment.html",
+                {
+                    "assignment": assignment,
+                    "subjects": subjects,
+                    "error": "Please select a valid subject."
+                }
             )
 
-    if request.method == "POST":
-        data = {
-            "title": request.POST.get("title", "").strip(),
-            "subject": request.POST.get("subject"),
-            "description": request.POST.get("description", "").strip(),
-            "due_date": request.POST.get("due_date"),
-            "priority": request.POST.get("priority"),
-            "status": request.POST.get("status"),
-            "name": request.POST.get("name", "").strip(),
-        }
-
-        files = {}
-        attachment = request.FILES.get("attachment")
+        # Update assignment
+        assignment.title = title
+        assignment.subject = subject
+        assignment.description = description
+        assignment.due_date = due_date
+        assignment.priority = priority
+        assignment.status = status
+        assignment.name = name
 
         if attachment:
-            files["attachment"] = (
-                attachment.name,
-                attachment.file,
-                attachment.content_type
-            )
+            assignment.attachment = attachment
 
-        try:
-            response = requests.patch(
-                api_url,
-                data=data,
-                files=files,
-                timeout=10
-            )
+        assignment.save()
 
-        except requests.RequestException as e:
-            return HttpResponse(
-                f"API connection failed: {e}",
-                status=503
-            )
-
-        if response.status_code == 200:
-            return redirect("assignment_list")
-
-        try:
-            error_details = response.json()
-        except ValueError:
-            error_details = response.text
-
-        subject_response = requests.get(
-            "http://127.0.0.1:8000/api/subject/"
-        )
-        subjects = (
-            subject_response.json()
-            if subject_response.status_code == 200
-            else []
-        )
-
-        return render(
+        messages.success(
             request,
-            "edit_assignment.html",
-            {
-                "assignment": {
-                    **data,
-                    "id": id,
-                },
-                "subjects": subjects,
-                "error": f"Update failed: {error_details}",
-            },
-            status=400
+            "Assignment updated successfully!"
         )
 
+        return redirect("assignment_list")
 
 
 def delete_assignment(request, id):
-    api_url = f"http://127.0.0.1:8000/api/assignment/{id}/"
+
+    try:
+        assignment = Assignment.objects.get(id=id)
+    except Assignment.DoesNotExist:
+        return HttpResponse("Assignment not found", status=404)
 
     if request.method == "GET":
-        try:
-            response = requests.get(api_url, timeout=5)
 
-            if response.status_code == 404:
-                return HttpResponse("Assignment not found", status=404)
-
-            if response.status_code != 200:
-                return HttpResponse(
-                    f"Unable to fetch assignment: {response.text}",
-                    status=response.status_code
-                )
-
-            return render(
-                request,
-                "assignment_delete.html",
-                {"assignment": response.json()}
-            )
-
-        except requests.RequestException as e:
-            return HttpResponse(
-                f"API connection failed: {e}",
-                status=503
-            )
-
-    if request.method == "POST":
-        try:
-            response = requests.delete(api_url, timeout=5)
-
-        except requests.RequestException as e:
-            return HttpResponse(
-                f"API connection failed: {e}",
-                status=503
-            )
-
-        if response.status_code in (200, 204):
-            return redirect("assignment_list")
-
-        return HttpResponse(
-            f"Delete failed: {response.text}",
-            status=response.status_code
+        return render(
+            request,
+            "assignment_delete.html",
+            {
+                "assignment": assignment
+            }
         )
 
+    if request.method == "POST":
 
+        assignment.delete()
+
+        messages.success(
+            request,
+            "Assignment deleted successfully!"
+        )
+
+        return redirect("assignment_list")
 
 
 from django.shortcuts import render
