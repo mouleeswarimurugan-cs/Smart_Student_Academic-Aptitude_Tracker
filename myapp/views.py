@@ -585,12 +585,14 @@ def delete_assignment(request, id):
 
 
 from django.shortcuts import render
+from django.views.decorators.cache import never_cache
 
+@never_cache
 def subject_list(request):
 
     subjects = Subject.objects.all()
 
-    return render(
+    response = render(
         request,
         "subject_list.html",
         {
@@ -598,6 +600,8 @@ def subject_list(request):
             "error": None,
         }
     )
+
+    return response
 
 
 def add_subject(request):
