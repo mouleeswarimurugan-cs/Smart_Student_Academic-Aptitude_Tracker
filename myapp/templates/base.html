@@ -77,19 +77,16 @@
             color: var(--accent);
         }
 
-        /* Hide checkbox */
 
         .menu-checkbox {
             display: none;
         }
 
-        /* Hide hamburger on desktop */
 
         .menu-toggle {
             display: none;
         }
 
-        /* Desktop menu links - always visible */
 
         .navbar-links {
             display: flex;
@@ -123,10 +120,6 @@
             color: #ffffff;
         }
 
-        /* =========================
-           MAIN PAGE CONTENT
-        ========================= */
-
         .main-content {
             min-height: calc(100vh - 80px);
             padding: 35px 0;
@@ -139,9 +132,6 @@
                 var(--page-bg);
         }
 
-        /* =========================
-           BUTTONS
-        ========================= */
 
         .btn-primary {
             background-color: var(--primary);
@@ -165,9 +155,6 @@
             border-color: var(--primary);
         }
 
-        /* =========================
-           CARDS
-        ========================= */
 
         .card {
             border: 1px solid #ebe7f6;
@@ -181,9 +168,6 @@
             font-weight: bold;
         }
 
-        /* =========================
-           FORMS
-        ========================= */
 
         .form-control:focus,
         .form-select:focus {
@@ -196,9 +180,6 @@
             color: var(--primary-dark);
         }
 
-        /* =========================
-           TABLES
-        ========================= */
 
         .table thead th {
             background-color: #ede9fe;
@@ -210,19 +191,12 @@
             vertical-align: middle;
         }
 
-        /* =========================
-           ALERT MESSAGES
-        ========================= */
 
         .alert {
             border-radius: 10px;
             margin-bottom: 20px;
         }
 
-        /* =========================
-           TABLET
-           Keep all links visible
-        ========================= */
 
         @media (min-width: 576px) and (max-width: 991.98px) {
 
@@ -240,10 +214,6 @@
             }
         }
 
-        /* =========================
-           MOBILE NAVBAR
-           Hamburger icon only
-        ========================= */
 
         @media (max-width: 575.98px) {
 
@@ -264,7 +234,6 @@
                 min-width: 0;
             }
 
-            /* Show three-line hamburger */
 
             .menu-toggle {
                 display: flex;
@@ -294,7 +263,6 @@
                 background: rgba(255, 255, 255, 0.15);
             }
 
-            /* Hide mobile links initially */
 
             .navbar-links {
                 display: none;
@@ -310,7 +278,6 @@
                 box-shadow: 0 8px 20px rgba(30, 27, 75, 0.22);
             }
 
-            /* Show links when hamburger is checked */
 
             .menu-checkbox:checked ~ .navbar-links {
                 display: flex;
@@ -359,26 +326,19 @@
 
 <body>
 
-    <!-- =========================
-         TOP NAVIGATION
-    ========================= -->
-
     <nav class="navbar-custom">
         <div class="container">
 
             <!-- Website title -->
-            <a class="navbar-brand"
-               href="{% url 'dashboard' %}">
-                🎓 Smart Student Academic &amp; Aptitude Tracker
-            </a>
+           <a class="navbar-brand brand-name" href="{% url 'home' %}">
+    🎓 Smart Student Academic & Aptitude Tracker
+</a>
 
-            <!-- Mobile hamburger checkbox -->
             <input
                 type="checkbox"
                 id="menu-toggle"
                 class="menu-checkbox">
 
-            <!-- Three-line menu icon: mobile only -->
             <label
                 for="menu-toggle"
                 class="menu-toggle"
@@ -390,7 +350,6 @@
 
             </label>
 
-            <!-- Navigation links -->
             <ul class="navbar-links">
 
                 <li>
@@ -428,14 +387,11 @@
         </div>
     </nav>
 
-    <!-- =========================
-         MAIN CONTENT
-    ========================= -->
+
 
     <main class="main-content">
         <div class="container">
 
-            <!-- Django Messages -->
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-info" role="alert">
@@ -444,7 +400,6 @@
                 {% endfor %}
             {% endif %}
 
-            <!-- Individual page content -->
             {% block content %}
             {% endblock %}
 
