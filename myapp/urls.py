@@ -6,6 +6,7 @@ from myapp.views import *
 from . import views
 
 
+
 urlpatterns = [
 
     # Home

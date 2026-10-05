@@ -154,5 +154,8 @@ MAILERS = {
     },
 }
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 #https://smart-student-academic-aptitude-tracker.onrender.com

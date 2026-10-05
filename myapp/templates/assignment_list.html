@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}Assignments - Smart Assignment Tracker{% endblock %}
@@ -436,35 +435,55 @@
         <!-- HEADER -->
         <div class="assignment-header">
             <div class="row align-items-center g-3">
+
                 <div class="col-12 col-md">
                     <div class="header-content">
-                        <h1> My Assignments</h1>
+
+                        <h1>My Assignments</h1>
+
                         <p>
                             Manage, search and track your assignments easily.
                         </p>
+
                     </div>
                 </div>
 
                 <div class="col-12 col-md-auto">
+
                     <a href="{% url 'add_assignment' %}"
                        class="add-assignment-btn">
                         ＋ Add Assignment
                     </a>
+
                 </div>
+
             </div>
         </div>
 
 
+        <!-- SEARCH AND FILTER -->
         <div class="filter-card">
 
             <div class="filter-heading">
-                <div class="filter-icon">🔍</div>
+
+                <div class="filter-icon">
+                    🔍
+                </div>
 
                 <div>
-                    <h3>Search &amp; Filter</h3>
-                    <p>Find assignments by title, subject, priority or status.</p>
+
+                    <h3>
+                        Search &amp; Filter
+                    </h3>
+
+                    <p>
+                        Find assignments by title, subject, priority or status.
+                    </p>
+
                 </div>
+
             </div>
+
 
             <form method="GET"
                   action="{% url 'assignment_list' %}"
@@ -474,6 +493,7 @@
 
                     <!-- SEARCH -->
                     <div class="col-12 col-md-6 col-lg-4">
+
                         <label for="search" class="form-label">
                             Search Assignment
                         </label>
@@ -486,21 +506,29 @@
                             placeholder="Search title or description..."
                             value="{{ search|default:'' }}"
                         >
+
                     </div>
+
 
                     <!-- SUBJECT -->
                     <div class="col-12 col-md-6 col-lg-3">
+
                         <label for="subject" class="form-label">
                             Subject
                         </label>
 
-                        <select id="subject"
-                                name="subject"
-                                class="form-select">
+                        <select
+                            id="subject"
+                            name="subject"
+                            class="form-select"
+                        >
 
-                            <option value="">All Subjects</option>
+                            <option value="">
+                                All Subjects
+                            </option>
 
                             {% for subject in subjects %}
+
                                 <option
                                     value="{{ subject.id }}"
                                     {% if selected_subject == subject.id|stringformat:"s" %}
@@ -509,210 +537,322 @@
                                 >
                                     {{ subject.name|default:subject.subject_name }}
                                 </option>
+
                             {% endfor %}
 
                         </select>
+
                     </div>
+
 
                     <!-- PRIORITY -->
                     <div class="col-12 col-md-6 col-lg-2">
+
                         <label for="priority" class="form-label">
                             Priority
                         </label>
 
-                        <select id="priority"
-                                name="priority"
-                                class="form-select">
+                        <select
+                            id="priority"
+                            name="priority"
+                            class="form-select"
+                        >
 
-                            <option value="">All Priorities</option>
+                            <option value="">
+                                All Priorities
+                            </option>
 
                             <option value="High"
-                                {% if selected_priority == "High" %}selected{% endif %}>
+                                {% if selected_priority == "High" %}
+                                    selected
+                                {% endif %}
+                            >
                                 High
                             </option>
 
                             <option value="Medium"
-                                {% if selected_priority == "Medium" %}selected{% endif %}>
+                                {% if selected_priority == "Medium" %}
+                                    selected
+                                {% endif %}
+                            >
                                 Medium
                             </option>
 
                             <option value="Low"
-                                {% if selected_priority == "Low" %}selected{% endif %}>
+                                {% if selected_priority == "Low" %}
+                                    selected
+                                {% endif %}
+                            >
                                 Low
                             </option>
 
                         </select>
+
                     </div>
+
 
                     <!-- STATUS -->
                     <div class="col-12 col-md-6 col-lg-3">
+
                         <label for="status" class="form-label">
                             Status
                         </label>
 
-                        <select id="status"
-                                name="status"
-                                class="form-select">
+                        <select
+                            id="status"
+                            name="status"
+                            class="form-select"
+                        >
 
-                            <option value="">All Statuses</option>
+                            <option value="">
+                                All Statuses
+                            </option>
 
                             <option value="Pending"
-                                {% if selected_status == "Pending" %}selected{% endif %}>
+                                {% if selected_status == "Pending" %}
+                                    selected
+                                {% endif %}
+                            >
                                 Pending
                             </option>
 
                             <option value="In Progress"
-                                {% if selected_status == "In Progress" %}selected{% endif %}>
+                                {% if selected_status == "In Progress" %}
+                                    selected
+                                {% endif %}
+                            >
                                 In Progress
                             </option>
 
                             <option value="Completed"
-                                {% if selected_status == "Completed" %}selected{% endif %}>
+                                {% if selected_status == "Completed" %}
+                                    selected
+                                {% endif %}
+                            >
                                 Completed
                             </option>
 
                         </select>
+
                     </div>
 
-                    <!-- BUTTONS -->
+
+                    <!-- SEARCH BUTTON -->
                     <div class="col-12 col-md-6 col-lg-2">
-                        <button type="submit"
-                                class="btn search-btn w-100">
-                             Search
+
+                        <button
+                            type="submit"
+                            class="btn search-btn w-100"
+                        >
+                            Search
                         </button>
+
                     </div>
 
+
+                    <!-- CLEAR BUTTON -->
                     <div class="col-12 col-md-6 col-lg-2">
-                        <a href="{% url 'assignment_list' %}"
-                           class="clear-btn w-100">
+
+                        <a
+                            href="{% url 'assignment_list' %}"
+                            class="clear-btn w-100"
+                        >
                             Clear Filters
                         </a>
+
                     </div>
 
                 </div>
+
             </form>
+
         </div>
 
 
+        <!-- ASSIGNMENT LIST -->
         <div class="row g-4">
 
             {% for assignment in assignments %}
 
                 <div class="col-12 col-md-6 col-xl-4">
+
                     <div class="assignment-card">
 
                         <!-- SUBJECT -->
                         <span class="subject-badge">
-                             {{ assignment.subject_name|default:assignment.subject }}
+                            {{ assignment.subject_name|default:assignment.subject }}
                         </span>
 
+
                         <!-- TITLE -->
-                        <h3>{{ assignment.title }}</h3>
+                        <h3>
+                            {{ assignment.title }}
+                        </h3>
 
 
+                        <!-- DESCRIPTION -->
                         <p class="description">
                             {{ assignment.description|default:"No description provided." }}
                         </p>
 
+
                         <!-- DETAILS -->
                         <div class="details-box">
 
+                            <!-- DUE DATE -->
                             <div class="detail-row">
-                                <span class="detail-label">Due Date</span>
+
+                                <span class="detail-label">
+                                    Due Date
+                                </span>
+
                                 <span class="detail-value">
                                     {{ assignment.due_date|date:"d M Y" }}
                                 </span>
+
                             </div>
 
+
+                            <!-- PRIORITY -->
                             <div class="detail-row">
-                                <span class="detail-label">Priority</span>
+
+                                <span class="detail-label">
+                                    Priority
+                                </span>
+
                                 <span class="detail-value">
+
                                     <span class="priority
-                                        {% if assignment.priority == 'High' %}priority-high
-                                        {% elif assignment.priority == 'Medium' %}priority-medium
-                                        {% else %}priority-low{% endif %}">
+                                        {% if assignment.priority == 'High' %}
+                                            priority-high
+                                        {% elif assignment.priority == 'Medium' %}
+                                            priority-medium
+                                        {% else %}
+                                            priority-low
+                                        {% endif %}
+                                    ">
                                         {{ assignment.priority }}
                                     </span>
+
                                 </span>
+
                             </div>
 
+
+                            <!-- STATUS -->
                             <div class="detail-row">
-                                <span class="detail-label">Status</span>
+
+                                <span class="detail-label">
+                                    Status
+                                </span>
+
                                 <span class="detail-value">
+
                                     <span class="status
-                                        {% if assignment.status == 'Pending' %}status-pending
-                                        {% elif assignment.status == 'In Progress' %}status-progress
-                                        {% else %}status-completed{% endif %}">
+                                        {% if assignment.status == 'Pending' %}
+                                            status-pending
+                                        {% elif assignment.status == 'In Progress' %}
+                                            status-progress
+                                        {% else %}
+                                            status-completed
+                                        {% endif %}
+                                    ">
                                         {{ assignment.status }}
                                     </span>
+
                                 </span>
+
                             </div>
 
+
+                            <!-- STUDENT -->
                             <div class="detail-row">
-                                <span class="detail-label">Student</span>
+
+                                <span class="detail-label">
+                                    Student
+                                </span>
+
                                 <span class="detail-value">
                                     {{ assignment.name }}
                                 </span>
+
                             </div>
 
                         </div>
 
 
+                        <!-- ATTACHMENT -->
                         {% if assignment.attachment %}
-                            <a href="{{ assignment.attachment.url }}"
-                               target="_blank"
-                               rel="noopener noreferrer"
-                               class="attachment">
-                                 View Attachment
+
+                            <a
+                                href="/media/{{ assignment.attachment.name }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="attachment"
+                            >
+                                View Attachment
                             </a>
+
                         {% endif %}
 
 
+                        <!-- ACTION BUTTONS -->
                         <div class="button-group">
 
-                            <a href="{% url 'edit_assignment' assignment.id %}"
-                               class="edit-btn">
-                                 Edit
+                            <a
+                                href="{% url 'edit_assignment' assignment.id %}"
+                                class="edit-btn"
+                            >
+                                Edit
                             </a>
 
-                            <a href="{% url 'delete_assignment' assignment.id %}"
-                               class="delete-btn">
-                                 Delete
+
+                            <a
+                                href="{% url 'delete_assignment' assignment.id %}"
+                                class="delete-btn"
+                            >
+                                Delete
                             </a>
 
                         </div>
 
                     </div>
+
                 </div>
+
 
             {% empty %}
 
-               
+                <!-- EMPTY STATE -->
                 <div class="col-12">
+
                     <div class="empty-state">
 
-                        
-
-                        <h3>No Assignments Found</h3>
+                        <h3>
+                            No Assignments Found
+                        </h3>
 
                         <p>
                             No assignments match your current search or filters.
                             Try changing your filters or add a new assignment.
                         </p>
 
-                        <a href="{% url 'add_assignment' %}"
-                           class="empty-add-btn">
+                        <a
+                            href="{% url 'add_assignment' %}"
+                            class="empty-add-btn"
+                        >
                             ＋ Add Assignment
                         </a>
 
                     </div>
+
                 </div>
 
             {% endfor %}
 
         </div>
+
     </div>
 </div>
 
 {% endblock %}
-
